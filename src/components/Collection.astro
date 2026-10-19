@@ -1,0 +1,44 @@
+---
+import Icon from './Icon.astro';
+import ProductCard from './ProductCard.astro';
+import { categories, products } from '../data/products';
+---
+<section class="collection section-light" id="colecao">
+  <div class="wrap">
+    <div class="section-top">
+      <div>
+        <span class="eyebrow">01 / UM UNIVERSO DE DETALHES</span>
+        <h2>Uma seleção que<br> <em>fala por você.</em></h2>
+      </div>
+      <p class="section-intro">Peças do mostruário AP. Toque em uma peça para baixar a foto ou compartilhar com a sua cliente.</p>
+    </div>
+    <div class="catalog-toolbar">
+      <div class="category-tabs" role="group" aria-label="Categorias do mostruário">
+        <button data-category="todas" aria-pressed="true">Todas</button>
+        {categories.map(category => <button data-category={category.id} aria-pressed="false">{category.label}</button>)}
+      </div>
+      <label class="catalog-search">
+        <Icon name="search" />
+        <input id="catalog-search" type="search" placeholder="Buscar nome ou código" aria-label="Buscar nome ou código da peça" autocomplete="off">
+      </label>
+    </div>
+    <div class="catalog-status">
+      <span id="results-count" role="status" aria-live="polite">{products.length} peças na seleção</span>
+      <button class="saved-filter" id="saved-filter" aria-pressed="false">Ver minhas favoritas <Icon name="heart" /></button>
+    </div>
+    <div class="product-grid" id="product-grid">
+      {products.map(product => <ProductCard product={product} />)}
+      <div id="catalog-empty" class="empty-state" hidden>
+        <h3 id="empty-title">Vamos procurar outro detalhe?</h3>
+        <p id="empty-description">Nenhuma peça corresponde a essa busca.</p>
+        <button class="button outline" data-reset>Ver todas as peças <Icon name="arrow" /></button>
+      </div>
+    </div>
+    <noscript>
+      <p>Todas as peças estão acima. Ative o JavaScript para buscar, filtrar e salvar suas favoritas.</p>
+    </noscript>
+    <div class="load-more">
+      <button class="button outline" id="load-more" hidden>Ver mais peças <span id="remaining-count"></span> <Icon name="arrow" /></button>
+    </div>
+  </div>
+</section>

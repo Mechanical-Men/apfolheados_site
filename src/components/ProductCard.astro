@@ -1,0 +1,27 @@
+---
+import Icon from './Icon.astro';
+import { productDownloadName, productImage, type Product } from '../data/products';
+import { shareMessage, whatsappUrl } from '../lib/catalog';
+interface Props { product: Product }
+const { product } = Astro.props;
+---
+<article class="product-card" data-product={product.code}>
+  <div class="product-photo">
+    <button class="photo-button" data-view={product.code} aria-label={`Ver detalhes de ${product.name}`}>
+      <img src={productImage(product)} alt={product.name} width="600" height="750" loading="lazy" decoding="async" />
+      <span class="photo-caption-hover">VER ESTE DETALHE ↗</span>
+    </button>
+    <button class="product-favorite" data-favorite={product.code} aria-pressed="false" aria-label={`Salvar ${product.name}`}><Icon name="heart" /></button>
+  </div>
+  <div class="product-meta">
+    <div>
+      <h3>{product.name}</h3>
+      <div class="product-code"><span>{product.code}</span><button class="copy-code" data-copy-code={product.code} aria-label={`Copiar referência ${product.code}`}>copiar</button></div>
+    </div>
+    <button class="quick-arrow" data-view={product.code} aria-label={`Ver ${product.name}`}><Icon name="up-right" /></button>
+  </div>
+  <div class="product-actions">
+    <a href={whatsappUrl(shareMessage(product))} target="_blank" rel="noopener noreferrer"><Icon name="message" />Compartilhar</a>
+    <a href={productImage(product)} download={productDownloadName(product)} aria-label={`Baixar foto de ${product.name}`}><Icon name="download" /><span>Foto</span></a>
+  </div>
+</article>

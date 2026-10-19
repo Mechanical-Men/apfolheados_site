@@ -1,0 +1,25 @@
+{
+  "name": "ap-folheados",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "check": "astro check",
+    "test": "node --test tests/*.test.ts",
+    "build": "astro build",
+    "preview": "astro preview",
+    "preencher": "grep -rn \"PREENCHER\" src"
+  },
+  "dependencies": {
+    "astro": "^7.4.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@types/node": "^24.0.0",
+    "typescript": "~5.9.3"
+  }
+}

@@ -1,0 +1,31 @@
+---
+import { initials, testimonials } from '../data/testimonials';
+---
+<section class="testimonials section-light" id="depoimentos">
+  <div class="wrap">
+    <div class="section-top">
+      <div>
+        <span class="eyebrow">05 / QUEM JÁ VENDE AP</span>
+        <h2>Sacoleiras que <em>confiam</em></h2>
+      </div>
+    </div>
+    {/* Depoimentos em src/data/testimonials.ts. [PREENCHER: os atuais são mock] */}
+    <ul class="testimonial-list" role="list">
+      {testimonials.map(item => (
+        <li class="testimonial-card">
+          <blockquote>“{item.quote}”</blockquote>
+          <div class="testimonial-author">
+            {item.photo
+              ? <img src={`/assets/depoimentos/${item.photo}`} alt="" width="56" height="56" loading="lazy">
+              : <span class="testimonial-avatar" aria-hidden="true">{initials(item.name)}</span>}
+            <div>
+              <strong>{item.name}</strong>
+              <span>{item.city}</span>
+              <span>{item.since}</span>
+            </div>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

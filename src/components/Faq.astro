@@ -1,0 +1,26 @@
+---
+import Icon from './Icon.astro';
+import { brand } from '../config/brand';
+import { faq } from '../data/content';
+import { faqMessage, whatsappUrl } from '../lib/catalog';
+---
+<section class="faq section-light" id="duvidas">
+  <div class="wrap faq-layout">
+    <div>
+      <span class="eyebrow">06 / SEM COMPLICAÇÃO</span>
+      <h2>A gente<br> <em>conversa.</em></h2>
+      <p>Algumas respostas para começar.<br>
+        Não achou sua dúvida? <a class="inline-link" href={whatsappUrl(faqMessage, brand.whatsapp)} target="_blank" rel="noopener noreferrer">Chame a gente no WhatsApp <Icon name="up-right" /></a>
+      </p>
+    </div>
+    <div class="faq-list">
+      {/* Perguntas e respostas em src/data/content.ts. */}
+      {faq.map(item => (
+        <details>
+          <summary>{item.question}<span aria-hidden="true">+</span></summary>
+          <p>{item.answer}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>

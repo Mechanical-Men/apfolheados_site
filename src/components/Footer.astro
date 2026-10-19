@@ -1,0 +1,37 @@
+---
+import Brand from './Brand.astro';
+import Icon from './Icon.astro';
+import { brand, instagramUrl } from '../config/brand';
+import { whatsappUrl } from '../lib/catalog';
+const { company } = brand;
+---
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <Brand />
+      <p>Detalhes que acompanham o dia a dia.<br>Uma história que continua com você.</p>
+      <a class="back-top" href="#topo">VOLTAR AO TOPO ↑</a>
+    </div>
+    {/* Dados da empresa em src/config/brand.ts. [PREENCHER: os valores atuais são mock] */}
+    <div class="footer-company">
+      <address>
+        <strong>{company.legalName}</strong>
+        <span>CNPJ {company.cnpj}</span>
+        <span>{company.address}, {company.city}</span>
+        <span>Atendimento: {company.hours}</span>
+      </address>
+      <div class="footer-contact">
+        <a href={whatsappUrl('Olá, AP Folheados!', brand.whatsapp)} target="_blank" rel="noopener noreferrer"><Icon name="message" />WhatsApp {brand.whatsappDisplay}</a>
+        <a href={instagramUrl} target="_blank" rel="noopener"><Icon name="instagram" />@{brand.instagramUser}</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year">{new Date().getFullYear()}</span> AP FOLHEADOS</span>
+      <div>
+        <a href="#colecao">Mostruário</a>
+        <a href="#revenda">Revenda</a>
+        <button id="privacy-open">Privacidade</button>
+      </div>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,31 @@
+---
+import { brand } from '../config/brand';
+import IconSymbols from '../components/IconSymbols.astro';
+import '../styles/global.css';
+interface Props { title?: string; description?: string }
+const { title = brand.title, description = brand.description } = Astro.props;
+---
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#101010" />
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <title>{title}</title>
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/cormorant-garamond-500-normal.woff" as="font" type="font/woff" crossorigin="anonymous" />
+  </head>
+  <body>
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+    <IconSymbols />
+    <slot />
+    <script>
+      import '../scripts/site';
+    </script>
+  </body>
+</html>

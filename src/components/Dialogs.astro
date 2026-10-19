@@ -1,0 +1,59 @@
+---
+import Icon from './Icon.astro';
+---
+<dialog id="piece-dialog" class="piece-dialog" aria-labelledby="piece-title">
+<button class="dialog-close icon-button" aria-label="Fechar peça" data-close="piece-dialog">
+<Icon name="close" />
+</button>
+<div id="piece-content">
+</div>
+</dialog>
+<dialog id="favorites-dialog" class="favorites-dialog" aria-labelledby="favorites-title">
+<div class="dialog-heading">
+<div>
+<span class="eyebrow">SEUS DETALHES</span>
+<h2 id="favorites-title">Peças <em>salvas.</em>
+</h2>
+</div>
+<button class="icon-button" aria-label="Fechar favoritas" data-close="favorites-dialog">
+<Icon name="close" />
+</button>
+</div>
+<div id="favorites-content">
+</div>
+</dialog>
+<dialog id="resource-dialog" class="resource-dialog" aria-labelledby="resource-title">
+<div class="dialog-heading">
+<h2 id="resource-title">
+</h2>
+<button class="icon-button" aria-label="Fechar" data-close="resource-dialog">
+<Icon name="close" />
+</button>
+</div>
+<div id="resource-content">
+</div>
+</dialog>
+<dialog id="contact-dialog" class="contact-dialog" aria-labelledby="contact-title">
+<div class="dialog-heading">
+<div>
+<span class="eyebrow">PRONTA PARA A CONVERSA</span>
+<h2 id="contact-title">A sua <em>mensagem.</em>
+</h2>
+</div>
+<button class="icon-button" aria-label="Fechar mensagem" data-close="contact-dialog">
+<Icon name="close" />
+</button>
+</div>
+<p>Confira o texto e escolha o contato da AP no WhatsApp para enviar.</p>
+<label class="sr-only" for="contact-message">Mensagem preparada</label>
+<textarea id="contact-message" rows="8" readonly>
+</textarea>
+<div class="dialog-actions">
+<a class="button black" id="contact-whatsapp" href="https://wa.me/" target="_blank" rel="noopener noreferrer">Escolher contato no WhatsApp <Icon name="up-right" />
+</a>
+<button class="button outline" id="contact-copy">Copiar mensagem <Icon name="copy" />
+</button>
+</div>
+</dialog>
+<div id="toast" class="toast" role="status" aria-live="polite">
+</div>

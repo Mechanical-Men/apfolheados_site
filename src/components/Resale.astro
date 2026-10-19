@@ -1,0 +1,28 @@
+---
+import Icon from './Icon.astro';
+import { resaleSteps } from '../data/content';
+---
+<section class="resale section-light" id="revenda">
+  <div class="resale-photo">
+    {/* TROCAR FOTO: substituir public/assets/revenda.webp por uma foto real do mostruário AP. */}
+    <img src="/assets/revenda.webp" alt="Mãos organizando semijoias no mostruário AP" loading="lazy" width="1122" height="1402">
+    <span class="photo-caption">O MOSTRUÁRIO AP</span>
+  </div>
+  <div class="resale-content">
+    <span class="eyebrow">03 / SEJA UMA REVENDEDORA AP</span>
+    <h2>Como funciona<br> a <em>revenda AP</em></h2>
+    <p>Você leva o mostruário, vende para as suas clientes e acerta só o que vendeu.</p>
+    <ol class="resale-steps">
+      {resaleSteps.map((step, index) => (
+        <li>
+          <span>{String(index + 1).padStart(2, '0')}</span>
+          <div>
+            <h3>{step.title}</h3>
+            <p>{step.text}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+    <a href="#contato" class="button black">Quero revender a AP <Icon name="up-right" /></a>
+  </div>
+</section>

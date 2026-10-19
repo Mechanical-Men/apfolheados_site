@@ -1,0 +1,52 @@
+---
+import Icon from './Icon.astro';
+import { brand, instagramUrl } from '../config/brand';
+---
+<section class="contact" id="contato">
+  <div class="wrap contact-layout">
+    <div class="contact-copy">
+      <span class="eyebrow light">SEU PRÓXIMO CAPÍTULO</span>
+      <h2>Vamos levar<br>esse brilho<br> <em>mais longe?</em></h2>
+      <p>Conte um pouco sobre você e prepare seu primeiro contato sobre a revenda AP.</p>
+      <div class="contact-location">
+        <span>AP FOLHEADOS</span>
+        <p>Itaperuna · Rio de Janeiro</p>
+        <a class="social-link" href={instagramUrl} target="_blank" rel="noopener"><Icon name="instagram" />@{brand.instagramUser}</a>
+      </div>
+    </div>
+    <form id="resale-form" method="post" class="contact-form">
+      <div class="form-row">
+        <div class="field">
+          <label for="contact-name">SEU NOME</label>
+          <input id="contact-name" name="nome" autocomplete="name" placeholder="Como podemos te chamar?" required minlength="2" maxlength="100">
+        </div>
+        <div class="field">
+          <label for="contact-phone">WHATSAPP COM DDD</label>
+          <input id="contact-phone" name="whatsapp" type="tel" autocomplete="tel" inputmode="tel" placeholder="(22) 99999-9999" required maxlength="19">
+        </div>
+      </div>
+      <div class="field">
+        <label for="contact-city">CIDADE</label>
+        <input id="contact-city" name="cidade" autocomplete="address-level2" placeholder="Sua cidade e estado" required minlength="2" maxlength="100">
+      </div>
+      <div class="field">
+        <label for="contact-experience">VOCÊ JÁ REVENDE SEMIJOIAS?</label>
+        <select id="contact-experience" name="experiencia" required>
+          <option value="">Selecione uma opção</option>
+          <option>Ainda não, quero começar</option>
+          <option>Sim, já trabalho com revenda</option>
+          <option>Quero conhecer melhor antes de decidir</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="contact-referral">QUEM TE INDICOU? <span>OPCIONAL</span></label>
+        <input id="contact-referral" name="indicacao" placeholder="Nome da pessoa, se houver" maxlength="100">
+      </div>
+      <button class="button ivory" type="submit" disabled>Continuar pelo WhatsApp <Icon name="up-right" /></button>
+      <p class="form-note">{brand.whatsapp ? 'Ao continuar, você revisa sua mensagem e abre a conversa com a AP no WhatsApp. Nenhum cadastro é enviado automaticamente.' : 'Ao continuar, você escolhe o contato da AP e envia sua mensagem pelo WhatsApp. Nenhum cadastro é enviado automaticamente.'}</p>
+      <noscript>
+        <p class="form-note">Ative o JavaScript para preparar sua mensagem. Os campos não são enviados por este formulário.</p>
+      </noscript>
+    </form>
+  </div>
+</section>

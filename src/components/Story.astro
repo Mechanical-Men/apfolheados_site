@@ -1,0 +1,40 @@
+---
+import Icon from './Icon.astro';
+---
+<section class="story" id="historia">
+  <div class="wrap story-layout">
+    <div class="story-number">
+      <span class="eyebrow light">02 / A NOSSA HISTÓRIA</span>
+      <div class="years">30<span>+</span></div>
+      <p>anos de parceria,<br>de mão em mão.</p>
+      <svg class="story-mark" viewBox="0 0 448 263" aria-hidden="true"><use href="#ap-mark"/></svg>
+    </div>
+    <div class="story-copy">
+      <span class="eyebrow light">TRADIÇÃO QUE CONTINUA</span>
+      <h2>O tempo passa.<br> <em>A confiança fica.</em></h2>
+      <p>Há mais de 30 anos, a AP Folheados faz parte da rotina de revendedoras de Itaperuna e região. Mulheres que apresentam as peças, conhecem suas clientes e levam essa história adiante.</p>
+      <p>É uma relação construída na conversa, no cuidado e em cada novo encontro.</p>
+      <a href="#revenda" class="text-link light-link">Faça parte dessa história <Icon name="up-right" /></a>
+    </div>
+  </div>
+  <div class="wrap plating" id="banho">
+    <div class="plating-copy">
+      <span class="eyebrow light">O BANHO AP</span>
+      <h3>Banho que <em>dura.</em></h3>
+      {/* Não usar as palavras "antialérgico" nem "hipoalergênico" neste bloco. */}
+      <p>Banho mais grosso, feito para o uso diário. Muitas clientes contam que não tiveram alergia.</p>
+    </div>
+    <div class="plating-compare">
+      {/* [PREENCHER: foto de peça com X meses de uso] (mock: as duas fotos abaixo são provisórias; trocar por peça nova × mesma peça após meses de uso) */}
+      <figure>
+        <img src="/assets/pecas/argola_grossa.jpg" alt="Argola Lisa Grossa nova" width="600" height="750" loading="lazy" decoding="async">
+        <figcaption>PEÇA NOVA</figcaption>
+      </figure>
+      <figure>
+        <img src="/assets/pecas/argola_grossa.jpg" alt="Argola Lisa Grossa depois de 6 meses de uso" width="600" height="750" loading="lazy" decoding="async">
+        {/* [PREENCHER: tempo de uso da foto real] (mock) */}
+        <figcaption>COM 6 MESES DE USO</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
