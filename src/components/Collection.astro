@@ -17,25 +17,20 @@ import { categories, products } from '../data/products';
         <button data-category="todas" aria-pressed="true">Todas</button>
         {categories.map(category => <button data-category={category.id} aria-pressed="false">{category.label}</button>)}
       </div>
-      <label class="catalog-search">
-        <Icon name="search" />
-        <input id="catalog-search" type="search" placeholder="Buscar nome ou código" aria-label="Buscar nome ou código da peça" autocomplete="off">
-      </label>
     </div>
     <div class="catalog-status">
       <span id="results-count" role="status" aria-live="polite">{products.length} peças na seleção</span>
-      <button class="saved-filter" id="saved-filter" aria-pressed="false">Ver minhas favoritas <Icon name="heart" /></button>
     </div>
     <div class="product-grid" id="product-grid">
       {products.map(product => <ProductCard product={product} />)}
       <div id="catalog-empty" class="empty-state" hidden>
-        <h3 id="empty-title">Vamos procurar outro detalhe?</h3>
-        <p id="empty-description">Nenhuma peça corresponde a essa busca.</p>
+        <h3>Em breve, novos detalhes.</h3>
+        <p>Ainda não há peças nesta categoria.</p>
         <button class="button outline" data-reset>Ver todas as peças <Icon name="arrow" /></button>
       </div>
     </div>
     <noscript>
-      <p>Todas as peças estão acima. Ative o JavaScript para buscar, filtrar e salvar suas favoritas.</p>
+      <p>Todas as peças estão acima. Ative o JavaScript para filtrar por categoria.</p>
     </noscript>
     <div class="load-more">
       <button class="button outline" id="load-more" hidden>Ver mais peças <span id="remaining-count"></span> <Icon name="arrow" /></button>

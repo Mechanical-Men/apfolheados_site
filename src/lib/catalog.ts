@@ -3,22 +3,9 @@ import { products, type Product, type Category } from '../data/products.ts';
 export type CatalogCategory = Category | 'todas';
 /** Pieces shown per page in the catalogue. */
 export const PAGE_SIZE = 12;
-export const normalize = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 
-export function filterProducts(category: CatalogCategory, query: string, savedOnly = false, saved: readonly string[] = []) {
-  return products.filter(product =>
-    (category === 'todas' || product.category === category) &&
-    (!savedOnly || saved.includes(product.code)) &&
-    (!query || normalize(`${product.name} ${product.code}`).includes(normalize(query))),
-  );
-}
-
-export function sanitizeSaved(value: unknown): string[] {
-  if (!Array.isArray(value)) return [];
-  return [...new Set(value)].filter((code): code is string =>
-    typeof code === 'string' && products.some(product => product.code === code),
-  );
-}
+export const filterProducts = (category: CatalogCategory) =>
+  products.filter(product => category === 'todas' || product.category === category);
 
 export function validPhone(value: string) {
   let digits = value.replace(/\D/g, '');

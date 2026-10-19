@@ -1,8 +1,8 @@
 import { brand } from '../config/brand';
 import { careGuideText, careTips, clientMessageTemplate } from '../data/content';
-import { products, productDownloadName, productImage, type Product } from '../data/products';
+import { products, productDownloadName, productImage } from '../data/products';
 import {
-  PAGE_SIZE, contactMessage, filterProducts, sanitizeSaved, shareMessage, validPhone, whatsappUrl,
+  PAGE_SIZE, contactMessage, filterProducts, shareMessage, validPhone, whatsappUrl,
   type CatalogCategory, type ContactValues,
 } from '../lib/catalog';
 
@@ -16,15 +16,9 @@ const icon = (name: string) => `<svg class="icon" aria-hidden="true"><use href="
 const escapeHtml = (value: string) => value.replace(/[&<>"']/g, char => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
 }[char]!));
-const storageKey = 'apfolheados.favorites.v1';
-let favorites: string[] = [];
-try { favorites = sanitizeSaved(JSON.parse(localStorage.getItem(storageKey) || '[]')); } catch { /* Storage is optional. */ }
 let category: CatalogCategory = 'todas';
-let query = '';
-let savedOnly = false;
 let limit = PAGE_SIZE;
 let toastTimer: ReturnType<typeof setTimeout>;
-const search = element<HTMLInputElement>('#catalog-search');
 const cards = [...document.querySelectorAll<HTMLElement>('[data-product]')];
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -54,41 +48,16 @@ async function copyText(text: string) {
 }
 
 function renderCatalog() {
-  const list = filterProducts(category, query, savedOnly, favorites);
+  const list = filterProducts(category);
   const visible = new Set(list.slice(0, limit).map(product => product.code));
   cards.forEach(card => { card.hidden = !visible.has(card.dataset.product!); });
   element('#catalog-empty').hidden = list.length > 0;
-  element('#empty-title').textContent = savedOnly ? 'Seus próximos detalhes.' : 'Vamos procurar outro detalhe?';
-  element('#empty-description').textContent = savedOnly
-    ? 'Salve uma peça no coração para encontrá-la aqui.'
-    : 'Nenhuma peça corresponde a essa busca. Tente outro nome ou referência.';
   element('#results-count').textContent = `${list.length} ${list.length === 1 ? 'peça na seleção' : 'peças na seleção'}`;
   element('#remaining-count').textContent = list.length > limit ? `+${list.length - limit}` : '';
   element('#load-more').hidden = list.length <= limit;
-  element('#saved-filter').setAttribute('aria-pressed', String(savedOnly));
-  const counter = element('#favorite-count');
-  counter.textContent = String(favorites.length);
-  counter.hidden = favorites.length === 0;
-  element('#favorites-open').setAttribute('aria-label', `Ver ${favorites.length} peças salvas`);
   document.querySelectorAll<HTMLButtonElement>('[data-category]').forEach(button => {
     button.setAttribute('aria-pressed', String(button.dataset.category === category));
   });
-  document.querySelectorAll<HTMLButtonElement>('[data-favorite]').forEach(button => {
-    const saved = favorites.includes(button.dataset.favorite!);
-    const product = products.find(item => item.code === button.dataset.favorite);
-    button.setAttribute('aria-pressed', String(saved));
-    button.setAttribute('aria-label', `${saved ? 'Remover' : 'Salvar'} ${product?.name || 'peça'}`);
-    if (!button.classList.contains('product-favorite')) button.innerHTML = icon('heart') + (saved ? 'Salva' : 'Salvar');
-  });
-}
-
-function toggleFavorite(code: string) {
-  if (!products.some(product => product.code === code)) return;
-  favorites = favorites.includes(code) ? favorites.filter(item => item !== code) : [...favorites, code];
-  try { localStorage.setItem(storageKey, JSON.stringify(favorites)); } catch { /* Keep in-memory favorites working. */ }
-  renderCatalog();
-  renderFavorites();
-  toast(favorites.includes(code) ? 'Peça salva nos seus detalhes.' : 'Peça removida das favoritas.');
 }
 
 const returnFocus = new WeakMap<HTMLDialogElement, Element | null>();
@@ -117,29 +86,12 @@ function showProduct(code: string) {
         <a class="button black" href="${whatsappUrl(shareMessage(product))}" target="_blank" rel="noopener noreferrer">Compartilhar referência ${icon('up-right')}</a>
         <div class="piece-options">
           <a href="${image}" download="${productDownloadName(product)}">${icon('download')}Baixar foto</a>
-          <button data-favorite="${product.code}" aria-pressed="${favorites.includes(product.code)}">${icon('heart')}${favorites.includes(product.code) ? 'Salva' : 'Salvar'}</button>
           <button data-copy-code="${product.code}">${icon('copy')}Copiar código</button>
         </div>
       </div>
     </div>`;
   showDialog('piece-dialog');
 }
-
-function favoriteRow(product: Product) {
-  return `<div class="favorite-row">
-    <img src="${productImage(product)}" alt="${escapeHtml(product.name)}" width="600" height="750">
-    <div><h3>${escapeHtml(product.name)}</h3><p>${product.code}</p><button data-view="${product.code}">Ver os detalhes ↗</button></div>
-    <button data-remove="${product.code}" aria-label="Remover ${escapeHtml(product.name)}">${icon('close')}</button>
-  </div>`;
-}
-
-function renderFavorites() {
-  const list = products.filter(product => favorites.includes(product.code));
-  element('#favorites-content').innerHTML = list.length
-    ? `<div class="favorites-list">${list.map(favoriteRow).join('')}</div>`
-    : `<div class="empty-state"><h3>Guarde o que encanta.</h3><p>Toque no coração de uma peça para salvar seus detalhes favoritos.</p><button class="button black" data-browse>Explorar as peças ${icon('arrow')}</button></div>`;
-}
-
 
 function showResource(kind: string) {
   element('#resource-title').textContent = kind === 'messages' ? 'Uma conversa começa aqui.' : 'Para o seu brilho durar.';
@@ -155,25 +107,17 @@ function setMenu(open: boolean) {
   element('#menu-toggle').setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
 }
 
-function scrollToCatalog() {
-  element('#colecao').scrollIntoView({ behavior: reducedMotion.matches ? 'instant' : 'smooth' });
-}
-
 element('#menu-toggle').addEventListener('click', () => setMenu(!document.body.classList.contains('menu-open')));
 element('#navigation').addEventListener('click', event => {
   if (event.target instanceof Element && event.target.closest('a')) setMenu(false);
 });
 document.addEventListener('keydown', event => { if (event.key === 'Escape') setMenu(false); });
-element('#search-open').addEventListener('click', () => { scrollToCatalog(); search.focus({ preventScroll: true }); });
-search.addEventListener('input', () => { query = search.value; limit = PAGE_SIZE; renderCatalog(); });
-element('#saved-filter').addEventListener('click', () => { savedOnly = !savedOnly; limit = PAGE_SIZE; renderCatalog(); });
 element('#load-more').addEventListener('click', () => {
-  const firstNew = filterProducts(category, query, savedOnly, favorites)[limit];
+  const firstNew = filterProducts(category)[limit];
   limit += PAGE_SIZE;
   renderCatalog();
   if (firstNew) cards.find(card => card.dataset.product === firstNew.code)?.querySelector<HTMLButtonElement>('[data-view]')?.focus({ preventScroll: true });
 });
-element('#favorites-open').addEventListener('click', () => { renderFavorites(); showDialog('favorites-dialog'); });
 
 document.addEventListener('click', async event => {
   if (!(event.target instanceof Element)) return;
@@ -181,11 +125,6 @@ document.addEventListener('click', async event => {
   if (!button) return;
   if (button.dataset.category) { category = button.dataset.category as CatalogCategory; limit = PAGE_SIZE; renderCatalog(); }
   if (button.dataset.view) showProduct(button.dataset.view);
-  if (button.dataset.favorite) toggleFavorite(button.dataset.favorite);
-  if (button.dataset.remove) {
-    toggleFavorite(button.dataset.remove);
-    element('#favorites-content').querySelector<HTMLElement>('button')?.focus();
-  }
   if (button.dataset.copyCode) {
     const copied = await copyText(button.dataset.copyCode);
     toast(copied ? 'Referência copiada.' : 'Referência: ' + button.dataset.copyCode);
@@ -205,14 +144,9 @@ document.addEventListener('click', async event => {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
   if (button.hasAttribute('data-reset')) {
-    category = 'todas'; query = ''; savedOnly = false; limit = PAGE_SIZE; search.value = '';
+    category = 'todas'; limit = PAGE_SIZE;
     renderCatalog();
-    search.focus({ preventScroll: true });
-  }
-  if (button.hasAttribute('data-browse')) {
-    document.querySelectorAll<HTMLDialogElement>('dialog[open]').forEach(dialog => dialog.close());
-    scrollToCatalog();
-    search.focus({ preventScroll: true });
+    element<HTMLButtonElement>('[data-category="todas"]').focus({ preventScroll: true });
   }
 });
 
@@ -226,7 +160,6 @@ document.querySelectorAll<HTMLDialogElement>('dialog').forEach(dialog => {
     if (document.querySelector('dialog[open]')) return;
     const target = returnFocus.get(dialog);
     if (target instanceof HTMLElement && target.isConnected && !target.closest('dialog:not([open])') && !target.closest('[hidden]')) target.focus({ preventScroll: true });
-    else element('#favorites-open').focus({ preventScroll: true });
   });
 });
 
@@ -263,17 +196,11 @@ element('#contact-copy').addEventListener('click', async () => {
 });
 element('#privacy-open').addEventListener('click', () => {
   element('#resource-title').textContent = 'Sobre seus dados.';
-  element('#resource-content').innerHTML = '<p>Os dados do formulário são usados apenas para preparar a mensagem que você decide enviar pelo WhatsApp. Este site não envia um cadastro automaticamente e não grava os campos do formulário em um servidor.</p><p>As referências das peças favoritas ficam salvas apenas neste navegador. Você pode removê-las pelo coração ou limpar os dados do site no navegador.</p><p>Ao abrir o WhatsApp, o uso do aplicativo segue as condições e políticas do serviço.</p>';
+  element('#resource-content').innerHTML = '<p>Os dados do formulário são usados apenas para preparar a mensagem que você decide enviar pelo WhatsApp. Este site não envia um cadastro automaticamente e não grava os campos do formulário em um servidor.</p><p>Ao abrir o WhatsApp, o uso do aplicativo segue as condições e políticas do serviço.</p>';
   showDialog('resource-dialog');
 });
 
-window.addEventListener('storage', event => {
-  if (event.key !== storageKey && event.key !== null) return;
-  try { favorites = sanitizeSaved(JSON.parse(event.newValue || '[]')); } catch { favorites = []; }
-  renderCatalog(); renderFavorites();
-});
 renderCatalog();
-renderFavorites();
 document.documentElement.classList.add('js-enabled');
 
 let ticking = false;

@@ -15,7 +15,7 @@ Abra o endereço informado pelo Astro, normalmente `http://localhost:4321`.
 
 ```bash
 npm run check    # Tipos e componentes Astro
-npm test         # Busca, filtros, favoritas e mensagens
+npm test         # Filtros, telefone e mensagens
 npm run build    # Gera dist/ para publicação
 npm run preview  # Confere o build local
 npm run preencher # Lista os dados provisórios [PREENCHER] que faltam confirmar
@@ -37,7 +37,7 @@ O `package-lock.json` fixa as versões instaladas. Para instalar depois de alter
 | `src/data/content.ts` | Passos da revenda, FAQ, mensagem pronta e guia de cuidados |
 | `src/data/testimonials.ts` | Depoimentos de sacoleiras |
 | `src/styles/global.css` | Paleta, tipografia, layout e regras responsivas |
-| `src/scripts/site.ts` | Busca, filtros, favoritas, menu, diálogos e formulário |
+| `src/scripts/site.ts` | Filtros, menu, diálogos, carrossel, FAQ animado e formulário |
 | `src/lib/catalog.ts` | Funções de catálogo e preparação de mensagens |
 | `public/assets/pecas/` | Fotos das peças (uma por item de `products.ts`) |
 | `public/assets/` | Fotos do hero e da revenda, logo e favicon |
@@ -47,8 +47,7 @@ As cores ficam nas variáveis CSS do `:root`: `--black`, `--gold`, `--light-gold
 
 ## Funcionamento
 
-- A página e as peças são geradas em HTML durante o build. Com JavaScript ativo, o catálogo mostra 12 peças por vez e oferece busca, filtros e o botão "Ver mais peças".
-- As favoritas usam a chave `apfolheados.favorites.v1` do navegador, preservando as favoritas da versão anterior.
+- A página e as peças são geradas em HTML durante o build. Com JavaScript ativo, o catálogo mostra 12 peças por vez e oferece filtro por categoria e o botão "Ver mais peças".
 - O formulário prepara uma mensagem localmente. Não existe cadastro, banco de dados ou envio automático.
 - Imagens e fontes são locais. A abertura do WhatsApp depende do serviço externo.
 - As fotos das peças, da revenda e do bloco "Banho que dura" ainda são provisórias. Troque pelas fotos reais da AP antes do lançamento.

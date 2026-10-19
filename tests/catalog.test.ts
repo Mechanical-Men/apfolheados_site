@@ -1,23 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { products } from '../src/data/products.ts';
-import { contactMessage, filterProducts, sanitizeSaved, shareMessage, validPhone, whatsappUrl } from '../src/lib/catalog.ts';
+import { contactMessage, filterProducts, shareMessage, validPhone, whatsappUrl } from '../src/lib/catalog.ts';
 
-test('busca por nome sem acentos, maiúsculas e referência', () => {
-  assert.deepEqual(filterProducts('todas', 'SOLITARIO').map(product => product.code), ['AP-3008']);
-  assert.equal(filterProducts('todas', '  ap-2015  ')[0]?.name, 'Colar Gota Cristal');
-  assert.equal(filterProducts('todas', 'inexistente').length, 0);
-});
-
-test('categoria, busca e favoritas são combinadas', () => {
-  assert.equal(filterProducts('brincos', '').length, 4);
-  assert.deepEqual(filterProducts('colares', 'gota', true, ['AP-2015']).map(product => product.code), ['AP-2015']);
-  assert.equal(filterProducts('brincos', '', true, ['AP-2015']).length, 0);
-});
-
-test('favoritas armazenadas descartam dados desconhecidos ou inválidos', () => {
-  assert.deepEqual(sanitizeSaved(['AP-1042', 'AP-1042', null, 42, '<script>', 'AP-2015']), ['AP-1042', 'AP-2015']);
-  assert.deepEqual(sanitizeSaved({ code: 'AP-1042' }), []);
+test('filtro por categoria', () => {
+  assert.equal(filterProducts('todas').length, products.length);
+  assert.equal(filterProducts('brincos').length, 4);
+  assert.deepEqual(filterProducts('aneis').map(product => product.code), ['AP-3008']);
 });
 
 test('telefone aceita DDD, formatação e código do país', () => {
