@@ -292,3 +292,76 @@ if ('IntersectionObserver' in window && !reducedMotion.matches) {
   });
 }
 window.matchMedia('(min-width: 1025px)').addEventListener('change', event => { if (event.matches) setMenu(false); });
+
+// Carrossel de depoimentos: setas e indicadores sobre uma faixa com scroll-snap.
+const track = element('#testimonial-track');
+const slides = [...track.children] as HTMLElement[];
+const dots = element('#testimonial-dots');
+const prev = element<HTMLButtonElement>('[data-carousel-prev]');
+const next = element<HTMLButtonElement>('[data-carousel-next]');
+const slideStep = () => slides.length > 1 ? slides[1]!.offsetLeft - slides[0]!.offsetLeft : track.clientWidth;
+const positions = () => Math.max(1, slides.length - Math.round((track.clientWidth + 1) / slideStep()) + 1);
+const currentSlide = () => Math.min(positions() - 1, Math.round(track.scrollLeft / slideStep()));
+const goToSlide = (index: number) => track.scrollTo({ left: index * slideStep(), behavior: reducedMotion.matches ? 'instant' : 'smooth' });
+
+function renderDots() {
+  const count = positions();
+  if (dots.children.length !== count) {
+    dots.innerHTML = Array.from({ length: count }, (_, index) => `<button type="button" aria-label="Ir para o depoimento ${index + 1}"></button>`).join('');
+  }
+  updateCarousel();
+}
+
+function updateCarousel() {
+  const index = currentSlide();
+  const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
+  prev.disabled = track.scrollLeft <= 2;
+  next.disabled = atEnd;
+  [...dots.children].forEach((dot, dotIndex) => dot.setAttribute('aria-current', String(dotIndex === (atEnd ? positions() - 1 : index))));
+}
+
+prev.addEventListener('click', () => goToSlide(currentSlide() - 1));
+next.addEventListener('click', () => goToSlide(currentSlide() + 1));
+dots.addEventListener('click', event => {
+  const dot = event.target instanceof Element && event.target.closest('button');
+  if (dot) goToSlide([...dots.children].indexOf(dot));
+});
+track.addEventListener('keydown', event => {
+  if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+    event.preventDefault();
+    goToSlide(currentSlide() + (event.key === 'ArrowRight' ? 1 : -1));
+  }
+});
+let carouselFrame = 0;
+track.addEventListener('scroll', () => {
+  cancelAnimationFrame(carouselFrame);
+  carouselFrame = requestAnimationFrame(updateCarousel);
+}, { passive: true });
+window.addEventListener('resize', renderDots);
+renderDots();
+
+// FAQ: anima a altura ao abrir e fechar cada pergunta.
+document.querySelectorAll<HTMLDetailsElement>('.faq details').forEach(details => {
+  const summary = details.querySelector('summary')!;
+  let animation: Animation | null = null;
+  summary.addEventListener('click', event => {
+    if (reducedMotion.matches || !details.animate) return;
+    event.preventDefault();
+    const closing = details.open && !details.classList.contains('closing');
+    const start = details.offsetHeight;
+    animation?.cancel();
+    if (closing) details.classList.add('closing');
+    else { details.classList.remove('closing'); details.open = true; }
+    const style = getComputedStyle(details);
+    const end = closing
+      ? summary.offsetHeight + parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth)
+      : details.offsetHeight;
+    details.style.overflow = 'hidden';
+    animation = details.animate({ height: [`${start}px`, `${end}px`] }, { duration: closing ? 260 : 380, easing: 'cubic-bezier(.2,.7,.2,1)' });
+    animation.onfinish = () => {
+      if (closing) { details.open = false; details.classList.remove('closing'); }
+      details.style.overflow = '';
+      animation = null;
+    };
+  });
+});

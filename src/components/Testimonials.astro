@@ -1,4 +1,5 @@
 ---
+import Icon from './Icon.astro';
 import { initials, testimonials } from '../data/testimonials';
 ---
 <section class="testimonials section-light" id="depoimentos">
@@ -8,11 +9,15 @@ import { initials, testimonials } from '../data/testimonials';
         <span class="eyebrow">05 / QUEM JÁ VENDE AP</span>
         <h2>Sacoleiras que <em>confiam</em></h2>
       </div>
+      <div class="carousel-controls">
+        <button class="carousel-button" data-carousel-prev aria-controls="testimonial-track" aria-label="Depoimento anterior"><Icon name="arrow" class="icon icon-flip" /></button>
+        <button class="carousel-button" data-carousel-next aria-controls="testimonial-track" aria-label="Próximo depoimento"><Icon name="arrow" /></button>
+      </div>
     </div>
     {/* Depoimentos em src/data/testimonials.ts. [PREENCHER: os atuais são mock] */}
-    <ul class="testimonial-list" role="list">
-      {testimonials.map(item => (
-        <li class="testimonial-card">
+    <ul id="testimonial-track" class="testimonial-list" role="list" aria-label="Depoimentos de sacoleiras" tabindex="0">
+      {testimonials.map((item, index) => (
+        <li class="testimonial-card" aria-label={`Depoimento ${index + 1} de ${testimonials.length}`}>
           <blockquote>“{item.quote}”</blockquote>
           <div class="testimonial-author">
             {item.photo
@@ -27,5 +32,6 @@ import { initials, testimonials } from '../data/testimonials';
         </li>
       ))}
     </ul>
+    <div class="carousel-dots" id="testimonial-dots" role="group" aria-label="Escolher depoimento"></div>
   </div>
 </section>

@@ -181,8 +181,12 @@ svg{display:block}
 .resource-row>.icon{justify-self:end}
 
 .testimonials{padding:40px 0 100px}
-.testimonial-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:23px}
-.testimonial-card{display:flex;flex-direction:column;justify-content:space-between;gap:32px;padding:36px 32px 32px;border:1px solid var(--line)}
+.testimonials .section-top{align-items:end}
+/* Carrossel: rolagem com snap; setas e indicadores controlados em site.ts. */
+.testimonial-list{--per-view:3;--gap:23px;list-style:none;margin:0;padding:0;display:flex;gap:var(--gap);overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;overscroll-behavior-x:contain}
+.testimonial-list::-webkit-scrollbar{display:none}
+.testimonial-list:focus-visible{outline:2px solid var(--gold);outline-offset:6px}
+.testimonial-card{flex:0 0 calc((100% - (var(--per-view) - 1) * var(--gap)) / var(--per-view));scroll-snap-align:start;display:flex;flex-direction:column;justify-content:space-between;gap:32px;padding:36px 32px 32px;border:1px solid var(--line)}
 .testimonial-card blockquote{margin:0;font:500 italic 25px/1.3 var(--serif)}
 .testimonial-author{display:flex;align-items:center;gap:16px}
 .testimonial-author img,.testimonial-avatar{width:56px;height:56px;border-radius:50%;flex-shrink:0;object-fit:cover}
@@ -190,6 +194,17 @@ svg{display:block}
 .testimonial-author div{display:grid;gap:1px;font-size:var(--fs-action);line-height:1.5}
 .testimonial-author strong{font-size:var(--fs-text);font-weight:600}
 .testimonial-author div span{opacity:.78}
+.carousel-controls{display:flex;gap:10px;flex-shrink:0}
+.carousel-button{width:52px;height:52px;display:grid;place-items:center;border:1px solid var(--black);border-radius:50%;transition:background .2s,color .2s,opacity .2s}
+.carousel-button:hover:not(:disabled){background:var(--black);color:var(--ivory)}
+.carousel-button:disabled{opacity:.3}
+.carousel-button .icon{width:19px;height:19px}
+.icon-flip{transform:scaleX(-1)}
+.carousel-dots{display:flex;justify-content:center;gap:2px;margin-top:22px}
+.carousel-dots button{width:var(--touch);height:var(--touch);display:grid;place-items:center}
+.carousel-dots button:after{content:'';width:8px;height:8px;border-radius:50%;background:var(--black);opacity:.25;transition:opacity .2s,width .25s,border-radius .25s}
+.carousel-dots button[aria-current=true]:after{opacity:1;width:24px;border-radius:4px}
+html:not(.js-enabled) .carousel-controls,html:not(.js-enabled) .carousel-dots{display:none}
 
 .faq{padding:50px 0 100px}
 .faq-layout{display:grid;grid-template-columns:1fr 1.4fr;gap:110px}
@@ -202,6 +217,12 @@ svg{display:block}
 .faq summary span{font-size:24px;font-weight:400;line-height:1;transition:transform .2s}
 .faq details[open] summary span{transform:rotate(45deg)}
 .faq details p{font-size:var(--fs-text);line-height:var(--lh-text);opacity:.8;padding:0 35px 24px 0;max-width:620px}
+/* Abertura animada: a altura é animada em site.ts; o texto entra com fade. */
+.faq details[open]:not(.closing) p{animation:faq-reveal .4s cubic-bezier(.2,.7,.2,1) both}
+.faq details.closing p{opacity:0;transform:translateY(-6px);transition:opacity .2s,transform .2s}
+.faq details.closing summary span{transform:none}
+.faq summary:hover{color:var(--gold)}
+@keyframes faq-reveal{from{opacity:0;transform:translateY(-8px)}to{opacity:.8;transform:none}}
 
 .contact{padding:100px 0;border-top:1px solid rgba(217,181,106,.2)}
 .contact-layout{display:grid;grid-template-columns:1fr 1.1fr;gap:100px;align-items:start}
@@ -341,7 +362,7 @@ body.menu-open .menu-toggle span+span{transform:translateY(-4px) rotate(-45deg)}
 .form-row{grid-template-columns:1fr;gap:22px}
 .faq-layout{grid-template-columns:1fr;gap:30px}
 .faq-layout>div>p{max-width:100%}
-.testimonial-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+.testimonial-list{--per-view:2}
 .footer-top{flex-wrap:wrap}
 }
 
@@ -422,9 +443,11 @@ body.menu-open .menu-toggle span+span{transform:translateY(-4px) rotate(-45deg)}
 .resource-row:hover{padding-left:0;padding-right:0}
 .testimonials{padding:30px 0 60px}
 /* Depoimentos viram carrossel com rolagem horizontal no celular. */
-.testimonial-list{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:14px;margin:0 -20px;padding:0 20px 12px;scroll-padding:0 20px;scrollbar-width:none}
-.testimonial-list::-webkit-scrollbar{display:none}
-.testimonial-card{flex:0 0 86%;scroll-snap-align:start;padding:28px 22px 24px}
+.testimonials .section-top{display:flex;align-items:end;gap:20px}
+.testimonial-list{--gap:14px;margin:0 -20px;padding:0 20px;scroll-padding:0 20px}
+.testimonial-card{flex-basis:86%;padding:28px 22px 24px}
+.carousel-button{width:var(--touch);height:var(--touch)}
+.carousel-dots{margin-top:12px}
 .testimonial-card blockquote{font-size:23px}
 .faq{padding:35px 0 60px}
 .faq h2{font-size:54px;margin-top:15px}

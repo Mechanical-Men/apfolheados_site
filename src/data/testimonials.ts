@@ -10,7 +10,7 @@ export interface Testimonial {
 /**
  * Depoimentos de sacoleiras. Para adicionar mais, inclua um item neste array.
  * [PREENCHER: depoimentos reais, com nome, cidade e tempo de revenda autorizados] (mock)
- * Os três depoimentos abaixo são fictícios e NÃO podem ir ao ar.
+ * Os depoimentos abaixo são fictícios e NÃO podem ir ao ar.
  */
 export const testimonials: readonly Testimonial[] = [
   {
@@ -42,6 +42,26 @@ export const testimonials: readonly Testimonial[] = [
     city: 'Cachoeiro de Itapemirim, ES',
     // [PREENCHER: vende AP há X anos] (mock)
     since: 'Vende AP há 12 anos',
+  },
+  {
+    // [PREENCHER: depoimento real] (mock)
+    quote: 'Comecei sem experiência nenhuma. A equipe me explicou tudo e no primeiro mês já vendi quase o mostruário inteiro.',
+    // [PREENCHER: nome] (mock)
+    name: 'Juliana M.',
+    // [PREENCHER: cidade] (mock)
+    city: 'Bom Jesus do Itabapoana, RJ',
+    // [PREENCHER: vende AP há X anos] (mock)
+    since: 'Vende AP há 1 ano',
+  },
+  {
+    // [PREENCHER: depoimento real] (mock)
+    quote: 'Minhas clientes perguntam quando chega peça nova. O banho aguenta o dia a dia e ninguém volta reclamando.',
+    // [PREENCHER: nome] (mock)
+    name: 'Rosângela F.',
+    // [PREENCHER: cidade] (mock)
+    city: 'Campos dos Goytacazes, RJ',
+    // [PREENCHER: vende AP há X anos] (mock)
+    since: 'Vende AP há 15 anos',
   },
 ];
 
