@@ -1,12 +1,20 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { products } from '../src/data/products.ts';
+import type { Product } from '../src/data/products.ts';
+
+const photo = { card: 'c.jpg', large: 'l.jpg', thumb: 't.jpg', download: 'd.jpg' };
+const products: Product[] = [
+  { code: 'AP-1042', category: 'brincos', photos: [photo] },
+  { code: 'AP-1120', category: 'brincos', photos: [photo, photo] },
+  { code: 'AP-3008', name: 'Anel Solitário', category: 'aneis', photos: [photo] },
+];
 import { contactMessage, filterProducts, shareMessage, validPhone, whatsappUrl } from '../src/lib/catalog.ts';
 
 test('filtro por categoria', () => {
-  assert.equal(filterProducts('todas').length, products.length);
-  assert.equal(filterProducts('brincos').length, 4);
-  assert.deepEqual(filterProducts('aneis').map(product => product.code), ['AP-3008']);
+  assert.equal(filterProducts(products, 'todas').length, products.length);
+  assert.equal(filterProducts(products, 'brincos').length, 2);
+  assert.deepEqual(filterProducts(products, 'aneis').map(product => product.code), ['AP-3008']);
+  assert.equal(filterProducts(products, 'colares').length, 0);
 });
 
 test('telefone aceita DDD, formatação e código do país', () => {
@@ -25,9 +33,10 @@ test('mensagem preserva caracteres e não inclui indicação vazia', () => {
   assert.equal(new URL(whatsappUrl(message)).pathname, '/');
 });
 
-test('compartilhamento leva nome e código da peça', () => {
-  const message = shareMessage(products[0]!);
-  assert.ok(message.includes(products[0]!.name));
-  assert.ok(message.includes(products[0]!.code));
-  assert.ok(!/demonstrativ|ilustrativ/i.test(message));
+test('compartilhamento usa o nome quando existe, senão o código', () => {
+  const withName = shareMessage(products[2]!);
+  assert.ok(withName.includes('Anel Solitário (AP-3008)'));
+  const codeOnly = shareMessage(products[0]!);
+  assert.ok(codeOnly.includes(': AP-1042.'));
+  assert.ok(!codeOnly.includes('undefined'));
 });

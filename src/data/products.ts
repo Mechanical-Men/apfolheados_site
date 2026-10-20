@@ -1,12 +1,22 @@
 export type Category = 'brincos' | 'colares' | 'aneis' | 'pulseiras';
-export interface Product {
-  code: string;
-  name: string;
-  category: Category;
-  /** File name inside public/assets/pecas/. */
-  photo: string;
+
+/** URLs of one photo, already sized by the Sanity image CDN. */
+export interface ProductPhoto {
+  card: string;
+  large: string;
+  thumb: string;
+  download: string;
 }
 
+export interface Product {
+  code: string;
+  /** Not registered in Sanity yet; the code is shown instead. */
+  name?: string;
+  category: Category;
+  photos: ProductPhoto[];
+}
+
+/** Os valores precisam ser iguais aos do painel (studio-apfolheados/schemaTypes/peca.ts). */
 export const categories: readonly { id: Category; label: string }[] = [
   { id: 'brincos', label: 'Brincos' },
   { id: 'colares', label: 'Colares' },
@@ -14,27 +24,6 @@ export const categories: readonly { id: Category; label: string }[] = [
   { id: 'pulseiras', label: 'Pulseiras' },
 ];
 
-/**
- * Catálogo exibido no site.
- * TROCAR FOTOS: as fotos atuais são provisórias. Substitua os arquivos em
- * public/assets/pecas/ por fotos reais das peças da AP (proporção 4:5, 600×750)
- * e ajuste nome, código e categoria aqui. Para adicionar uma peça, basta
- * colocar a foto na pasta e incluir uma linha neste array.
- */
-export const products: readonly Product[] = [
-  { code: 'AP-1042', name: 'Argola Fio Veneziano', category: 'brincos', photo: 'argola.jpg' },
-  { code: 'AP-1120', name: 'Brinco Gota Cristal', category: 'brincos', photo: 'gota.jpg' },
-  { code: 'AP-2015', name: 'Colar Gota Cristal', category: 'colares', photo: 'colar_gota.jpg' },
-  { code: 'AP-3008', name: 'Anel Solitário', category: 'aneis', photo: 'anel.jpg' },
-  { code: 'AP-4012', name: 'Pulseira Riviera', category: 'pulseiras', photo: 'riviera.jpg' },
-  { code: 'AP-1007', name: 'Brinco Ponto de Luz', category: 'brincos', photo: 'ponto.jpg' },
-  { code: 'AP-2031', name: 'Choker Elos', category: 'colares', photo: 'elos.jpg' },
-  { code: 'AP-2044', name: 'Colar Medalha', category: 'colares', photo: 'medalha.jpg' },
-  { code: 'AP-1050', name: 'Argola Lisa Grossa', category: 'brincos', photo: 'argola_grossa.jpg' },
-  { code: 'AP-4003', name: 'Pulseira Elo Fino', category: 'pulseiras', photo: 'pulseira.jpg' },
-  { code: 'AP-4020', name: 'Bracelete Liso', category: 'pulseiras', photo: 'bracelete.jpg' },
-  { code: 'AP-2009', name: 'Colar Ponto de Luz', category: 'colares', photo: 'colar_ponto.jpg' },
-];
-
-export const productImage = (product: Product) => `/assets/pecas/${product.photo}`;
-export const productDownloadName = (product: Product) => `${product.code}-${product.photo}`;
+export const isCategory = (value: unknown): value is Category => categories.some(category => category.id === value);
+export const categoryLabel = (category: Category) => categories.find(item => item.id === category)!.label;
+export const productTitle = (product: Product) => product.name || product.code;

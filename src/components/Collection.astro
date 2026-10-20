@@ -1,7 +1,14 @@
 ---
 import Icon from './Icon.astro';
 import ProductCard from './ProductCard.astro';
-import { categories, products } from '../data/products';
+import { categories } from '../data/products';
+import { piecesLabel } from '../lib/catalog';
+import { getProducts } from '../lib/sanity';
+
+// Peças cadastradas no painel do Sanity (studio-apfolheados).
+const products = await getProducts();
+// Lido por site.ts para filtros e para o diálogo da peça. `<` escapado para não fechar o <script>.
+const catalogData = JSON.stringify(products).replace(/</g, '\\u003c');
 ---
 <section class="collection section-light" id="colecao">
   <div class="wrap">
@@ -19,19 +26,20 @@ import { categories, products } from '../data/products';
       </div>
     </div>
     <div class="catalog-status">
-      <span id="results-count" role="status" aria-live="polite">{products.length} peças na seleção</span>
+      <span id="results-count" role="status" aria-live="polite">{piecesLabel(products.length)}</span>
     </div>
     <div class="product-grid" id="product-grid">
       {products.map(product => <ProductCard product={product} />)}
-      <div id="catalog-empty" class="empty-state" hidden>
+      <div id="catalog-empty" class="empty-state" hidden={products.length > 0}>
         <h3>Em breve, novos detalhes.</h3>
-        <p>Ainda não há peças nesta categoria.</p>
-        <button class="button outline" data-reset>Ver todas as peças <Icon name="arrow" /></button>
+        <p>Ainda não há peças por aqui.</p>
+        <button class="button outline" data-reset hidden={products.length === 0}>Ver todas as peças <Icon name="arrow" /></button>
       </div>
     </div>
     <noscript>
       <p>Todas as peças estão acima. Ative o JavaScript para filtrar por categoria.</p>
     </noscript>
+    <script type="application/json" id="catalog-data" set:html={catalogData}></script>
     <div class="load-more">
       <button class="button outline" id="load-more" hidden>Ver mais peças <span id="remaining-count"></span> <Icon name="arrow" /></button>
     </div>

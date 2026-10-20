@@ -1,6 +1,6 @@
 import { brand } from '../config/brand';
 import { careGuideText, careTips, clientMessageTemplate } from '../data/content';
-import { products, productDownloadName, productImage } from '../data/products';
+import { categoryLabel, productTitle, type Product } from '../data/products';
 import {
   PAGE_SIZE, contactMessage, filterProducts, shareMessage, validPhone, whatsappUrl,
   type CatalogCategory, type ContactValues,
@@ -21,6 +21,9 @@ let limit = PAGE_SIZE;
 let toastTimer: ReturnType<typeof setTimeout>;
 const cards = [...document.querySelectorAll<HTMLElement>('[data-product]')];
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+// Peças do painel do Sanity, embutidas no HTML durante o build (Collection.astro).
+const products: Product[] = JSON.parse(element('#catalog-data').textContent || '[]');
+let openProduct: Product | undefined;
 
 function toast(message: string) {
   const target = element('#toast');
@@ -48,7 +51,7 @@ async function copyText(text: string) {
 }
 
 function renderCatalog() {
-  const list = filterProducts(category);
+  const list = filterProducts(products, category);
   const visible = new Set(list.slice(0, limit).map(product => product.code));
   cards.forEach(card => { card.hidden = !visible.has(card.dataset.product!); });
   element('#catalog-empty').hidden = list.length > 0;
@@ -74,23 +77,40 @@ function showDialog(id: string) {
 function showProduct(code: string) {
   const product = products.find(item => item.code === code);
   if (!product) return;
-  const name = escapeHtml(product.name);
-  const image = productImage(product);
+  openProduct = product;
+  const title = escapeHtml(productTitle(product));
+  const [photo] = product.photos;
+  const reference = product.name ? `REFERÊNCIA ${escapeHtml(product.code)}` : categoryLabel(product.category).toUpperCase();
+  const thumbs = product.photos.length > 1
+    ? `<div class="piece-thumbs" role="group" aria-label="Fotos da peça">${product.photos.map((item, index) =>
+      `<button data-photo="${index}" aria-pressed="${index === 0}" aria-label="Foto ${index + 1} de ${product.photos.length}"><img src="${escapeHtml(item.thumb)}" alt="" width="120" height="150"></button>`).join('')}</div>`
+    : '';
   element('#piece-content').innerHTML = `
     <div class="piece-layout">
-      <img class="piece-large-photo" src="${image}" alt="${name}" width="600" height="750">
+      <div class="piece-gallery">
+        <img class="piece-large-photo" src="${escapeHtml(photo!.large)}" alt="${title}" width="900" height="1125">
+        ${thumbs}
+      </div>
       <div class="piece-info">
         <span class="eyebrow">UM DETALHE PARA CONHECER</span>
-        <h2 id="piece-title">${name}</h2><span class="piece-ref">REFERÊNCIA ${escapeHtml(product.code)}</span>
+        <h2 id="piece-title">${title}</h2><span class="piece-ref">${reference}</span>
         <p>Baixe a foto ou compartilhe com a sua cliente. Para consultar a disponibilidade, envie o código para a equipe da AP.</p>
         <a class="button black" href="${whatsappUrl(shareMessage(product))}" target="_blank" rel="noopener noreferrer">Compartilhar referência ${icon('up-right')}</a>
         <div class="piece-options">
-          <a href="${image}" download="${productDownloadName(product)}">${icon('download')}Baixar foto</a>
-          <button data-copy-code="${product.code}">${icon('copy')}Copiar código</button>
+          <a id="piece-download" href="${escapeHtml(photo!.download)}" download>${icon('download')}Baixar foto</a>
+          <button data-copy-code="${escapeHtml(product.code)}">${icon('copy')}Copiar código</button>
         </div>
       </div>
     </div>`;
   showDialog('piece-dialog');
+}
+
+function selectPhoto(index: number) {
+  const photo = openProduct?.photos[index];
+  if (!photo) return;
+  element<HTMLImageElement>('.piece-large-photo').src = photo.large;
+  element<HTMLAnchorElement>('#piece-download').href = photo.download;
+  document.querySelectorAll('[data-photo]').forEach(button => button.setAttribute('aria-pressed', String(button.getAttribute('data-photo') === String(index))));
 }
 
 function showResource(kind: string) {
@@ -113,7 +133,7 @@ element('#navigation').addEventListener('click', event => {
 });
 document.addEventListener('keydown', event => { if (event.key === 'Escape') setMenu(false); });
 element('#load-more').addEventListener('click', () => {
-  const firstNew = filterProducts(category)[limit];
+  const firstNew = filterProducts(products, category)[limit];
   limit += PAGE_SIZE;
   renderCatalog();
   if (firstNew) cards.find(card => card.dataset.product === firstNew.code)?.querySelector<HTMLButtonElement>('[data-view]')?.focus({ preventScroll: true });
@@ -125,6 +145,7 @@ document.addEventListener('click', async event => {
   if (!button) return;
   if (button.dataset.category) { category = button.dataset.category as CatalogCategory; limit = PAGE_SIZE; renderCatalog(); }
   if (button.dataset.view) showProduct(button.dataset.view);
+  if (button.dataset.photo) selectPhoto(Number(button.dataset.photo));
   if (button.dataset.copyCode) {
     const copied = await copyText(button.dataset.copyCode);
     toast(copied ? 'Referência copiada.' : 'Referência: ' + button.dataset.copyCode);
@@ -247,11 +268,11 @@ function updateCarousel() {
   [...dots.children].forEach((dot, dotIndex) => dot.setAttribute('aria-current', String(dotIndex === (atEnd ? positions() - 1 : index))));
 }
 
-prev.addEventListener('click', () => goToSlide(currentSlide() - 1));
-next.addEventListener('click', () => goToSlide(currentSlide() + 1));
+prev.addEventListener('click', () => { goToSlide(currentSlide() - 1); scheduleAutoplay(); });
+next.addEventListener('click', () => { goToSlide(currentSlide() + 1); scheduleAutoplay(); });
 dots.addEventListener('click', event => {
   const dot = event.target instanceof Element && event.target.closest('button');
-  if (dot) goToSlide([...dots.children].indexOf(dot));
+  if (dot) { goToSlide([...dots.children].indexOf(dot)); scheduleAutoplay(); }
 });
 track.addEventListener('keydown', event => {
   if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
@@ -266,6 +287,54 @@ track.addEventListener('scroll', () => {
 }, { passive: true });
 window.addEventListener('resize', renderDots);
 renderDots();
+
+// Rotação automática: avança a cada 6s e volta ao início no fim. Não avança com o mouse ou
+// o foco do teclado no carrossel, fora da tela, com a aba oculta, com "reduzir movimento" ou pausada.
+const AUTOPLAY_MS = 6000;
+const carousel = element('#depoimentos');
+const pause = element<HTMLButtonElement>('[data-carousel-pause]');
+let autoplayTimer: ReturnType<typeof setTimeout> | undefined;
+let pausedByUser = false;
+let touching = false;
+let carouselInView = false;
+
+const canAutoplay = () => !pausedByUser && carouselInView && !document.hidden && !reducedMotion.matches && positions() > 1;
+// Estado lido na hora: mais confiável que pares mouseenter/mouseleave.
+const isInteracting = () => touching || carousel.matches(':hover') || !!carousel.querySelector(':focus-visible');
+
+function scheduleAutoplay() {
+  clearTimeout(autoplayTimer);
+  if (!canAutoplay()) return;
+  autoplayTimer = setTimeout(() => {
+    if (!isInteracting()) {
+      const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 2;
+      goToSlide(atEnd ? 0 : currentSlide() + 1);
+    }
+    scheduleAutoplay();
+  }, AUTOPLAY_MS);
+}
+
+pause.addEventListener('click', () => {
+  pausedByUser = !pausedByUser;
+  pause.setAttribute('aria-pressed', String(pausedByUser));
+  pause.setAttribute('aria-label', pausedByUser ? 'Retomar a rotação dos depoimentos' : 'Pausar a rotação dos depoimentos');
+  pause.innerHTML = icon(pausedByUser ? 'play' : 'pause');
+  scheduleAutoplay();
+});
+// Ao sair do carrossel, a contagem recomeça do zero.
+carousel.addEventListener('mouseleave', scheduleAutoplay);
+carousel.addEventListener('focusout', scheduleAutoplay);
+track.addEventListener('touchstart', () => { touching = true; }, { passive: true });
+track.addEventListener('touchend', () => { touching = false; scheduleAutoplay(); }, { passive: true });
+document.addEventListener('visibilitychange', scheduleAutoplay);
+reducedMotion.addEventListener('change', () => { pause.hidden = reducedMotion.matches; scheduleAutoplay(); });
+pause.hidden = reducedMotion.matches;
+if ('IntersectionObserver' in window) {
+  new IntersectionObserver(([entry]) => { carouselInView = entry!.isIntersecting; scheduleAutoplay(); }, { threshold: 0.4 }).observe(track);
+} else {
+  carouselInView = true;
+  scheduleAutoplay();
+}
 
 // FAQ: anima a altura ao abrir e fechar cada pergunta.
 document.querySelectorAll<HTMLDetailsElement>('.faq details').forEach(details => {

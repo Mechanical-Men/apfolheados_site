@@ -1,26 +1,33 @@
 ---
 import Icon from './Icon.astro';
-import { productDownloadName, productImage, type Product } from '../data/products';
+import { categoryLabel, productTitle, type Product } from '../data/products';
 import { shareMessage, whatsappUrl } from '../lib/catalog';
 interface Props { product: Product }
 const { product } = Astro.props;
+const title = productTitle(product);
+const [photo, worn] = product.photos;
 ---
-<article class="product-card" data-product={product.code}>
+<article class:list={['product-card', { 'has-worn': worn }]} data-product={product.code}>
   <div class="product-photo">
-    <button class="photo-button" data-view={product.code} aria-label={`Ver detalhes de ${product.name}`}>
-      <img src={productImage(product)} alt={product.name} width="600" height="750" loading="lazy" decoding="async" />
+    <button class="photo-button" data-view={product.code} aria-label={`Ver detalhes de ${title}`}>
+      <img src={photo!.card} alt={title} width="600" height="750" loading="lazy" decoding="async" />
+      {/* 2ª foto (modelo usando a peça): aparece com fade no hover, e a foto ganha topo em arco. */}
+      {worn && <img class="photo-worn" src={worn.card} alt="" width="600" height="750" loading="lazy" decoding="async" />}
       <span class="photo-caption-hover">VER ESTE DETALHE ↗</span>
     </button>
   </div>
   <div class="product-meta">
     <div>
-      <h3>{product.name}</h3>
-      <div class="product-code"><span>{product.code}</span><button class="copy-code" data-copy-code={product.code} aria-label={`Copiar referência ${product.code}`}>copiar</button></div>
+      <h3>{title}</h3>
+      <div class="product-code">
+        <span>{product.name ? product.code : categoryLabel(product.category)}</span>
+        <button class="copy-code" data-copy-code={product.code} aria-label={`Copiar referência ${product.code}`}>{product.name ? 'copiar' : 'copiar código'}</button>
+      </div>
     </div>
-    <button class="quick-arrow" data-view={product.code} aria-label={`Ver ${product.name}`}><Icon name="up-right" /></button>
+    <button class="quick-arrow" data-view={product.code} aria-label={`Ver ${title}`}><Icon name="up-right" /></button>
   </div>
   <div class="product-actions">
     <a href={whatsappUrl(shareMessage(product))} target="_blank" rel="noopener noreferrer"><Icon name="message" />Compartilhar</a>
-    <a href={productImage(product)} download={productDownloadName(product)} aria-label={`Baixar foto de ${product.name}`}><Icon name="download" /><span>Foto</span></a>
+    <a href={photo!.download} download aria-label={`Baixar foto de ${title}`}><Icon name="download" /><span>Foto</span></a>
   </div>
 </article>

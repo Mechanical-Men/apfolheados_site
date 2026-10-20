@@ -1,11 +1,13 @@
-import { products, type Product, type Category } from '../data/products.ts';
+import type { Product, Category } from '../data/products.ts';
 
 export type CatalogCategory = Category | 'todas';
 /** Pieces shown per page in the catalogue. */
 export const PAGE_SIZE = 12;
 
-export const filterProducts = (category: CatalogCategory) =>
+export const filterProducts = (products: readonly Product[], category: CatalogCategory) =>
   products.filter(product => category === 'todas' || product.category === category);
+
+export const piecesLabel = (count: number) => `${count} ${count === 1 ? 'peça na seleção' : 'peças na seleção'}`;
 
 export function validPhone(value: string) {
   let digits = value.replace(/\D/g, '');
@@ -13,7 +15,7 @@ export function validPhone(value: string) {
   return /^(?!([0-9])\1+$)[1-9]{2}\d{8,9}$/.test(digits);
 }
 
-export const shareMessage = (product: Product) => `Olha esta peça da AP Folheados: ${product.name} (${product.code}). Quer que eu separe para você?`;
+export const shareMessage = (product: Product) => `Olha esta peça da AP Folheados: ${product.name ? `${product.name} (${product.code})` : product.code}. Quer que eu separe para você?`;
 
 export interface ContactValues {
   nome: string;
