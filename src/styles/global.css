@@ -116,6 +116,8 @@ svg{display:block}
 .photo-button:hover .photo-caption-hover,.photo-button:focus-visible .photo-caption-hover{transform:translateY(0)}
 .product-meta{display:flex;justify-content:space-between;align-items:start;gap:12px;margin-top:15px}
 .product-meta h3{font-size:23px;line-height:1.15;margin-bottom:2px}
+/* Códigos (sem nome) em Montserrat: os números da Cormorant são de estilo antigo e ficam menores que as maiúsculas. */
+.product-meta h3.is-code{font:500 18px/1.3 var(--sans);letter-spacing:.03em;overflow-wrap:anywhere}
 .product-code{display:flex;align-items:center;gap:8px;font-size:var(--fs-code);letter-spacing:.06em}
 .product-code>span{opacity:.75}
 .copy-code{font-size:var(--fs-code);text-decoration:underline;text-underline-offset:3px;min-height:36px;padding:0 4px}
@@ -263,7 +265,7 @@ dialog{border:0;background:var(--ivory);color:var(--black);padding:35px;max-widt
 dialog::backdrop{background:rgba(16,16,16,.75);backdrop-filter:blur(6px)}
 .dialog-heading{display:flex;justify-content:space-between;align-items:start;gap:20px;margin-bottom:28px}
 .dialog-heading h2{font-size:42px;margin-top:8px}
-.dialog-close{position:absolute;top:15px;right:15px;z-index:2;background:var(--ivory)}
+.dialog-close{position:absolute;top:15px;right:15px;z-index:2}
 .piece-dialog{width:890px;padding:0;overflow:auto}
 .piece-layout{display:grid;grid-template-columns:1fr 1fr}
 .piece-large-photo{width:100%;height:100%;object-fit:cover;aspect-ratio:4/5;background:#eee5df}
@@ -274,6 +276,7 @@ dialog::backdrop{background:rgba(16,16,16,.75);backdrop-filter:blur(6px)}
 .piece-thumbs img{width:100%;height:100%;object-fit:cover}
 .piece-info{padding:65px 40px 35px;display:flex;flex-direction:column;justify-content:center;align-items:start}
 .piece-info h2{font-size:45px;margin:16px 0 13px}
+.piece-info h2.is-code{font:500 30px/1.2 var(--sans);letter-spacing:.02em;overflow-wrap:anywhere}
 .piece-info .piece-ref{font-size:var(--fs-code);letter-spacing:.06em;opacity:.75}
 .piece-info>p{font-size:var(--fs-text);line-height:var(--lh-text);margin-top:20px;opacity:.82}
 .piece-info .button{width:100%;margin-top:27px;gap:15px}
@@ -296,6 +299,11 @@ dialog::backdrop{background:rgba(16,16,16,.75);backdrop-filter:blur(6px)}
 .hero p{font-size:18px;max-width:480px}
 .hero-actions{margin-top:40px}
 .hero-bottom{padding-bottom:40px}
+}
+
+/* A faixa inteira tem ~1050px: em telas menores, só "BRILHO QUE DURA ✧ PARCERIA QUE FICA". */
+@media(max-width:1100px){.brand-ribbon{justify-content:center}
+.brand-ribbon>:nth-child(n+4){display:none}
 }
 
 @media(max-width:1240px){.header-cta{display:none}}
@@ -382,8 +390,8 @@ body.menu-open .menu-toggle span+span{transform:translateY(-4px) rotate(-45deg)}
 .hero-actions .button{padding:14px 18px;gap:20px}
 .hero-bottom{padding:40px 0 25px;gap:20px;letter-spacing:.1em}
 .hero-bottom>a{display:none}
-.brand-ribbon{justify-content:flex-start;gap:30px;padding:22px 20px}
-.brand-ribbon span:last-child{display:none}
+/* A faixa de valores não cabe no celular. */
+.brand-ribbon{display:none}
 .collection{padding:60px 0}
 .section-top{display:block;margin-bottom:28px}
 .section-top h2,.resale h2{font-size:53px;margin-top:14px}

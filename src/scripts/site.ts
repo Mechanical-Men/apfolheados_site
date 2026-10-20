@@ -93,7 +93,7 @@ function showProduct(code: string) {
       </div>
       <div class="piece-info">
         <span class="eyebrow">UM DETALHE PARA CONHECER</span>
-        <h2 id="piece-title">${title}</h2><span class="piece-ref">${reference}</span>
+        <h2 id="piece-title"${product.name ? '' : ' class="is-code"'}>${title}</h2><span class="piece-ref">${reference}</span>
         <p>Baixe a foto ou compartilhe com a sua cliente. Para consultar a disponibilidade, envie o código para a equipe da AP.</p>
         <a class="button black" href="${whatsappUrl(shareMessage(product))}" target="_blank" rel="noopener noreferrer">Compartilhar referência ${icon('up-right')}</a>
         <div class="piece-options">

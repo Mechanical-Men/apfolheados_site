@@ -18,7 +18,7 @@ const [photo, worn] = product.photos;
   </div>
   <div class="product-meta">
     <div>
-      <h3>{title}</h3>
+      <h3 class:list={{ 'is-code': !product.name }}>{title}</h3>
       <div class="product-code">
         <span>{product.name ? product.code : categoryLabel(product.category)}</span>
         <button class="copy-code" data-copy-code={product.code} aria-label={`Copiar referência ${product.code}`}>{product.name ? 'copiar' : 'copiar código'}</button>
