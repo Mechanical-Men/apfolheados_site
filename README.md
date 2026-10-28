@@ -29,7 +29,7 @@ O `package-lock.json` fixa as versões instaladas. Para instalar depois de alter
 | --- | --- |
 | `src/pages/index.astro` | Composição da página inicial |
 | `src/layouts/BaseLayout.astro` | HTML base, metadados e carregamento do script |
-| `src/components/` | Cabeçalho, hero, catálogo, história e banho, revenda, Central da Sacoleira, depoimentos, FAQ, contato e rodapé |
+| `src/components/` | Cabeçalho, hero, catálogo, história e banho, revenda, Central da Revendedora, depoimentos, FAQ, contato e rodapé |
 | `src/components/Brand.astro` | Assinatura da marca com slogan |
 | `src/components/IconSymbols.astro` | Logo versão 3 e ícones SVG |
 | `src/config/brand.ts` | Nome, descrição, WhatsApp, Instagram e dados da empresa (CNPJ, endereço, atendimento) |
@@ -37,7 +37,7 @@ O `package-lock.json` fixa as versões instaladas. Para instalar depois de alter
 | `src/lib/sanity.ts` | Busca as peças publicadas no Sanity durante o build |
 | `studio-apfolheados/` | Painel do Sanity onde a equipe cadastra as peças |
 | `src/data/content.ts` | Passos da revenda, FAQ, mensagem pronta e guia de cuidados |
-| `src/data/testimonials.ts` | Depoimentos de sacoleiras |
+| `src/data/testimonials.ts` | Depoimentos de revendedoras |
 | `src/styles/global.css` | Paleta, tipografia, layout e regras responsivas |
 | `src/scripts/site.ts` | Filtros, menu, diálogos, carrossel, FAQ animado e formulário |
 | `src/lib/catalog.ts` | Funções de catálogo e preparação de mensagens |
@@ -80,3 +80,13 @@ O site lê as peças publicadas no build. Em `npm run dev`, cada recarga busca d
 2. No Sanity, em **sanity.io/manage → projeto → API → Webhooks**, crie um webhook com essa URL, dataset `production`, método `POST`, gatilhos *Create*, *Update* e *Delete* e filtro `_type == "peca"`.
 
 As categorias precisam ser iguais em `src/data/products.ts` e em `studio-apfolheados/schemaTypes/peca.ts`.
+
+## Cadastro de revendedoras (Supabase)
+
+A página `/cadastro` (fora do Google, ainda sem link na home) grava no projeto Supabase **mechanicalmen-platform**, no schema `apfolheados`. A migração fica no repositório da plataforma: `supabase/migrations/20261028150000_apfolheados_cadastros.sql`.
+
+- **Escrita:** o site usa só a publishable key. Ela envia os documentos para o bucket privado `apfolheados-documentos` (pasta `cadastros/<id>/`) e chama a função `apfolheados.registrar_cadastro()`, que revalida tudo. A chave não lê a tabela nem lista arquivos.
+- **Leitura:** só usuários do Supabase Auth cadastrados em `apfolheados.admins` veem os cadastros e os documentos. Eles podem mudar só o `status`.
+- **Variáveis:** `PUBLIC_SUPABASE_URL` e `PUBLIC_SUPABASE_PUBLISHABLE_KEY` (ver `.env.example`). Configure as duas também na Vercel. Sem elas, o formulário valida mas avisa que o envio não está ligado.
+- **Código:** `src/lib/supabase.ts` (envio), `src/lib/registration.ts` (regras e formatos) e `src/scripts/cadastro.ts` (página).
+

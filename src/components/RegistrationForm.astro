@@ -1,0 +1,169 @@
+---
+import Icon from './Icon.astro';
+import { states } from '../lib/registration';
+
+const yesNo = [{ value: 'sim', label: 'Sim' }, { value: 'nao', label: 'Não' }];
+const residenceTimes = ['Menos de 1 ano', 'De 1 a 3 anos', 'De 3 a 5 anos', 'Mais de 5 anos'];
+---
+<form id="registration-form" class="registration-form" novalidate>
+  <fieldset class="form-block">
+    <legend><span>01</span> Dados pessoais</legend>
+    <div class="field">
+      <label for="reg-nome">NOME COMPLETO</label>
+      <input id="reg-nome" name="nome" autocomplete="name" required minlength="5" maxlength="120" aria-describedby="reg-nome-error">
+      <p class="field-error" id="reg-nome-error" hidden></p>
+    </div>
+    <div class="form-row">
+      <div class="field">
+        <label for="reg-cpf">CPF</label>
+        <input id="reg-cpf" name="cpf" inputmode="numeric" placeholder="000.000.000-00" required maxlength="14" aria-describedby="reg-cpf-error">
+        <p class="field-error" id="reg-cpf-error" hidden></p>
+      </div>
+      <div class="field">
+        <label for="reg-nascimento">DATA DE NASCIMENTO</label>
+        <input id="reg-nascimento" name="nascimento" inputmode="numeric" autocomplete="bday" placeholder="dd/mm/aaaa" required maxlength="10" aria-describedby="reg-nascimento-error">
+        <p class="field-error" id="reg-nascimento-error" hidden></p>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset class="form-block">
+    <legend><span>02</span> Contato</legend>
+    <div class="form-row">
+      <div class="field">
+        <label for="reg-whatsapp">WHATSAPP COM DDD</label>
+        <input id="reg-whatsapp" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" placeholder="(22) 99999-9999" required maxlength="15" aria-describedby="reg-whatsapp-error">
+        <p class="field-error" id="reg-whatsapp-error" hidden></p>
+      </div>
+      <div class="field">
+        <label for="reg-outros">OUTROS TELEFONES <span>OPCIONAL</span></label>
+        <input id="reg-outros" name="outros_telefones" inputmode="tel" placeholder="Fixo ou de um familiar" maxlength="120">
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset class="form-block">
+    <legend><span>03</span> Endereço</legend>
+    <div class="field field-cep">
+      <label for="reg-cep">CEP</label>
+      <input id="reg-cep" name="cep" inputmode="numeric" autocomplete="postal-code" placeholder="00000-000" required maxlength="9" aria-describedby="reg-cep-hint reg-cep-error">
+      <p class="field-hint" id="reg-cep-hint" aria-live="polite">Ao digitar o CEP, preenchemos o endereço para você.</p>
+      <p class="field-error" id="reg-cep-error" hidden></p>
+    </div>
+    <div class="field">
+      <label for="reg-endereco">ENDEREÇO</label>
+      <input id="reg-endereco" name="endereco" autocomplete="street-address" placeholder="Rua, número e complemento" required minlength="5" maxlength="200" aria-describedby="reg-endereco-error">
+      <p class="field-error" id="reg-endereco-error" hidden></p>
+    </div>
+    <div class="form-row form-row-city">
+      <div class="field">
+        <label for="reg-bairro">BAIRRO</label>
+        <input id="reg-bairro" name="bairro" autocomplete="address-level3" required maxlength="100" aria-describedby="reg-bairro-error">
+        <p class="field-error" id="reg-bairro-error" hidden></p>
+      </div>
+      <div class="field">
+        <label for="reg-cidade">CIDADE</label>
+        <input id="reg-cidade" name="cidade" autocomplete="address-level2" required minlength="2" maxlength="100" aria-describedby="reg-cidade-error">
+        <p class="field-error" id="reg-cidade-error" hidden></p>
+      </div>
+      <div class="field">
+        <label for="reg-uf">ESTADO</label>
+        <select id="reg-uf" name="uf" autocomplete="address-level1" required aria-describedby="reg-uf-error">
+          <option value="">UF</option>
+          {states.map(uf => <option>{uf}</option>)}
+        </select>
+        <p class="field-error" id="reg-uf-error" hidden></p>
+      </div>
+    </div>
+    <div class="field">
+      <label for="reg-referencia">PONTO DE REFERÊNCIA <span>OPCIONAL</span></label>
+      <input id="reg-referencia" name="referencia" placeholder="Perto de onde fica a sua casa?" maxlength="200">
+    </div>
+    <div class="form-row">
+      <fieldset class="choice-group" aria-describedby="reg-residencia-error">
+        <legend>TIPO DE RESIDÊNCIA</legend>
+        <div class="choices">
+          <label class="choice"><input type="radio" name="residencia_tipo" value="propria" required><span>Própria</span></label>
+          <label class="choice"><input type="radio" name="residencia_tipo" value="alugada"><span>Alugada</span></label>
+        </div>
+        <p class="field-error" id="reg-residencia-error" hidden></p>
+      </fieldset>
+      <div class="field">
+        <label for="reg-tempo">TEMPO NESSA RESIDÊNCIA</label>
+        <select id="reg-tempo" name="residencia_tempo" required aria-describedby="reg-tempo-error">
+          <option value="">Selecione</option>
+          {residenceTimes.map(time => <option>{time}</option>)}
+        </select>
+        <p class="field-error" id="reg-tempo-error" hidden></p>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset class="form-block">
+    <legend><span>04</span> Experiência</legend>
+    {[
+      { name: 'ja_vendeu', label: 'VOCÊ JÁ TRABALHOU COM VENDAS?' },
+      { name: 'ja_vendeu_consignado', label: 'JÁ TRABALHOU COM VENDAS CONSIGNADAS?' },
+      { name: 'tem_instagram', label: 'VOCÊ TEM INSTAGRAM?' },
+    ].map(question => (
+      <fieldset class="choice-group" aria-describedby={`reg-${question.name}-error`}>
+        <legend>{question.label}</legend>
+        <div class="choices">
+          {yesNo.map((option, index) => <label class="choice"><input type="radio" name={question.name} value={option.value} required={index === 0}><span>{option.label}</span></label>)}
+        </div>
+        <p class="field-error" id={`reg-${question.name}-error`} hidden></p>
+      </fieldset>
+    ))}
+    <div class="field" id="reg-instagram-field" hidden>
+      <label for="reg-instagram">SEU @ NO INSTAGRAM</label>
+      <div class="input-prefix"><span aria-hidden="true">@</span><input id="reg-instagram" name="instagram" autocapitalize="none" spellcheck="false" maxlength="60" aria-describedby="reg-instagram-error"></div>
+      <p class="field-error" id="reg-instagram-error" hidden></p>
+    </div>
+  </fieldset>
+
+  <fieldset class="form-block">
+    <legend><span>05</span> Sobre você</legend>
+    <div class="field">
+      <label for="reg-motivacao">POR QUE VOCÊ GOSTARIA DE SER UMA REVENDEDORA AP FOLHEADOS, E O QUE ESPERA QUE ESSA PARCERIA TRAGA DE RESULTADOS PARA VOCÊ?</label>
+      <textarea id="reg-motivacao" name="motivacao" rows="6" required minlength="20" maxlength="1500" aria-describedby="reg-motivacao-count reg-motivacao-error"></textarea>
+      <p class="field-hint field-count" id="reg-motivacao-count">0 / 1500</p>
+      <p class="field-error" id="reg-motivacao-error" hidden></p>
+    </div>
+  </fieldset>
+
+  <fieldset class="form-block">
+    <legend><span>06</span> Documentos</legend>
+    <p class="form-block-note">Pode ser foto tirada pelo celular ou PDF, com até 10 MB cada. Confira se dá para ler tudo.</p>
+    <div class="file-field" data-max-files="2">
+      <span class="file-title" id="reg-documento-title">DOCUMENTO PESSOAL COM FOTO</span>
+      <p class="field-hint" id="reg-documento-hint">RG ou CNH. Envie a frente e o verso (até 2 arquivos).</p>
+      <label class="file-drop">
+        <input type="file" id="reg-documento" name="documento" accept="image/*,.heic,.heif,application/pdf" multiple required aria-labelledby="reg-documento-title" aria-describedby="reg-documento-hint reg-documento-error">
+        <Icon name="upload" /><span>Escolher arquivos</span>
+      </label>
+      <ul class="file-list" id="reg-documento-list" aria-live="polite"></ul>
+      <p class="field-error" id="reg-documento-error" hidden></p>
+    </div>
+    <div class="file-field" data-max-files="1">
+      <span class="file-title" id="reg-comprovante-title">COMPROVANTE DE RESIDÊNCIA</span>
+      <p class="field-hint" id="reg-comprovante-hint">Conta de luz, água, telefone ou internet no seu endereço.</p>
+      <label class="file-drop">
+        <input type="file" id="reg-comprovante" name="comprovante" accept="image/*,.heic,.heif,application/pdf" required aria-labelledby="reg-comprovante-title" aria-describedby="reg-comprovante-hint reg-comprovante-error">
+        <Icon name="upload" /><span>Escolher arquivo</span>
+      </label>
+      <ul class="file-list" id="reg-comprovante-list" aria-live="polite"></ul>
+      <p class="field-error" id="reg-comprovante-error" hidden></p>
+    </div>
+  </fieldset>
+
+  <div class="form-finish">
+    <label class="consent">
+      <input type="checkbox" name="consentimento" value="sim" required aria-describedby="reg-consentimento-error">
+      <span>Autorizo a AP Folheados a guardar e usar estes dados e documentos para analisar o meu cadastro de revendedora e entrar em contato comigo. <button type="button" class="inline-button" data-privacy>Sobre seus dados</button></span>
+    </label>
+    <p class="field-error" id="reg-consentimento-error" hidden></p>
+    <button class="button ivory" type="submit" disabled>Enviar cadastro <Icon name="up-right" /></button>
+    <div class="form-status" id="registration-status" role="status" tabindex="-1" hidden></div>
+    <noscript><p class="form-note">Ative o JavaScript para enviar o cadastro.</p></noscript>
+  </div>
+</form>

@@ -5,50 +5,15 @@ import {
   PAGE_SIZE, contactMessage, filterProducts, shareMessage, validPhone, whatsappUrl,
   type CatalogCategory, type ContactValues,
 } from '../lib/catalog';
+import { copyText, element, escapeHtml, icon, reducedMotion, showDialog, toast } from './shell';
 
-function element<T extends Element = HTMLElement>(selector: string): T {
-  const result = document.querySelector<T>(selector);
-  if (!result) throw new Error(`Missing page element: ${selector}`);
-  return result;
-}
-
-const icon = (name: string) => `<svg class="icon" aria-hidden="true"><use href="#${name}"/></svg>`;
-const escapeHtml = (value: string) => value.replace(/[&<>"']/g, char => ({
-  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
-}[char]!));
+// Página inicial: mostruário, Central da Revendedora, contato, depoimentos e FAQ.
 let category: CatalogCategory = 'todas';
 let limit = PAGE_SIZE;
-let toastTimer: ReturnType<typeof setTimeout>;
 const cards = [...document.querySelectorAll<HTMLElement>('[data-product]')];
-const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 // Peças do painel do Sanity, embutidas no HTML durante o build (Collection.astro).
 const products: Product[] = JSON.parse(element('#catalog-data').textContent || '[]');
 let openProduct: Product | undefined;
-
-function toast(message: string) {
-  const target = element('#toast');
-  target.textContent = message;
-  target.classList.add('visible');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => target.classList.remove('visible'), 3000);
-}
-
-async function copyText(text: string) {
-  try { await navigator.clipboard.writeText(text); return true; } catch {
-    const previousFocus = document.activeElement;
-    const input = document.createElement('textarea');
-    input.value = text;
-    input.style.cssText = 'position:fixed;left:-9999px;top:0';
-    // A textarea outside an open modal is inert and cannot be selected.
-    (document.querySelector('dialog[open]') || document.body).append(input);
-    input.select();
-    let copied = false;
-    try { copied = document.execCommand('copy'); } catch { /* User can copy manually. */ }
-    input.remove();
-    if (previousFocus instanceof HTMLElement) previousFocus.focus({ preventScroll: true });
-    return copied;
-  }
-}
 
 function renderCatalog() {
   const list = filterProducts(products, category);
@@ -61,17 +26,6 @@ function renderCatalog() {
   document.querySelectorAll<HTMLButtonElement>('[data-category]').forEach(button => {
     button.setAttribute('aria-pressed', String(button.dataset.category === category));
   });
-}
-
-const returnFocus = new WeakMap<HTMLDialogElement, Element | null>();
-function showDialog(id: string) {
-  const dialog = element<HTMLDialogElement>(`#${id}`);
-  returnFocus.set(dialog, document.activeElement);
-  document.querySelectorAll<HTMLDialogElement>('dialog[open]').forEach(other => {
-    if (other !== dialog) other.close();
-  });
-  if (!dialog.open) dialog.showModal();
-  dialog.querySelector<HTMLElement>('button,a,input,textarea')?.focus();
 }
 
 function showProduct(code: string) {
@@ -121,17 +75,6 @@ function showResource(kind: string) {
   showDialog('resource-dialog');
 }
 
-function setMenu(open: boolean) {
-  document.body.classList.toggle('menu-open', open);
-  element('#menu-toggle').setAttribute('aria-expanded', String(open));
-  element('#menu-toggle').setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
-}
-
-element('#menu-toggle').addEventListener('click', () => setMenu(!document.body.classList.contains('menu-open')));
-element('#navigation').addEventListener('click', event => {
-  if (event.target instanceof Element && event.target.closest('a')) setMenu(false);
-});
-document.addEventListener('keydown', event => { if (event.key === 'Escape') setMenu(false); });
 element('#load-more').addEventListener('click', () => {
   const firstNew = filterProducts(products, category)[limit];
   limit += PAGE_SIZE;
@@ -150,7 +93,6 @@ document.addEventListener('click', async event => {
     const copied = await copyText(button.dataset.copyCode);
     toast(copied ? 'Referência copiada.' : 'Referência: ' + button.dataset.copyCode);
   }
-  if (button.dataset.close) element<HTMLDialogElement>(`#${button.dataset.close}`).close();
   if (button.dataset.resource) showResource(button.dataset.resource);
   if (button.hasAttribute('data-copy-template')) {
     const copied = await copyText(element<HTMLTextAreaElement>('#message-template').value);
@@ -169,19 +111,6 @@ document.addEventListener('click', async event => {
     renderCatalog();
     element<HTMLButtonElement>('[data-category="todas"]').focus({ preventScroll: true });
   }
-});
-
-document.querySelectorAll<HTMLDialogElement>('dialog').forEach(dialog => {
-  dialog.addEventListener('click', event => {
-    if (event.target !== dialog) return;
-    const rect = dialog.getBoundingClientRect();
-    if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close();
-  });
-  dialog.addEventListener('close', () => {
-    if (document.querySelector('dialog[open]')) return;
-    const target = returnFocus.get(dialog);
-    if (target instanceof HTMLElement && target.isConnected && !target.closest('dialog:not([open])') && !target.closest('[hidden]')) target.focus({ preventScroll: true });
-  });
 });
 
 const form = element<HTMLFormElement>('#resale-form');
@@ -215,21 +144,8 @@ element('#contact-copy').addEventListener('click', async () => {
   const copied = await copyText(element<HTMLTextAreaElement>('#contact-message').value);
   toast(copied ? 'Mensagem copiada.' : 'Selecione o texto para copiar.');
 });
-element('#privacy-open').addEventListener('click', () => {
-  element('#resource-title').textContent = 'Sobre seus dados.';
-  element('#resource-content').innerHTML = '<p>Os dados do formulário são usados apenas para preparar a mensagem que você decide enviar pelo WhatsApp. Este site não envia um cadastro automaticamente e não grava os campos do formulário em um servidor.</p><p>Ao abrir o WhatsApp, o uso do aplicativo segue as condições e políticas do serviço.</p>';
-  showDialog('resource-dialog');
-});
 
 renderCatalog();
-document.documentElement.classList.add('js-enabled');
-
-let ticking = false;
-window.addEventListener('scroll', () => {
-  if (ticking) return;
-  requestAnimationFrame(() => { element('.header').classList.toggle('scrolled', window.scrollY > 15); ticking = false; });
-  ticking = true;
-}, { passive: true });
 
 if ('IntersectionObserver' in window && !reducedMotion.matches) {
   const observer = new IntersectionObserver(entries => entries.forEach(entry => {
@@ -239,7 +155,6 @@ if ('IntersectionObserver' in window && !reducedMotion.matches) {
     target.classList.add('reveal'); observer.observe(target);
   });
 }
-window.matchMedia('(min-width: 1025px)').addEventListener('change', event => { if (event.matches) setMenu(false); });
 
 // Carrossel de depoimentos: setas e indicadores sobre uma faixa com scroll-snap.
 const track = element('#testimonial-track');

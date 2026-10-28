@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Dialogs from '../components/Dialogs.astro';
+import RegistrationForm from '../components/RegistrationForm.astro';
+---
+{/* Fora do Google (noindex) e sem link na home até o envio ser ligado ao Supabase. */}
+<BaseLayout title="Cadastro de revendedora — AP Folheados" description="Cadastro para ser revendedora AP Folheados." noindex>
+  <Header />
+  <main id="conteudo" class="registration">
+    <div class="wrap registration-layout">
+      <aside class="registration-intro">
+        <span class="eyebrow light">CADASTRO DE REVENDEDORA</span>
+        <h1>Seja uma<br> <em>revendedora AP.</em></h1>
+        <p>Preencha os seus dados para a equipe da AP analisar o seu cadastro e entrar em contato com você.</p>
+        <div class="registration-checklist">
+          <span class="eyebrow light">TENHA EM MÃOS</span>
+          <ul>
+            <li>CPF e CEP</li>
+            <li>Documento com foto (RG ou CNH), frente e verso</li>
+            <li>Comprovante de residência</li>
+          </ul>
+        </div>
+      </aside>
+      <RegistrationForm />
+    </div>
+  </main>
+  <Footer />
+  <Dialogs />
+  <script>
+    import '../scripts/cadastro';
+  </script>
+</BaseLayout>

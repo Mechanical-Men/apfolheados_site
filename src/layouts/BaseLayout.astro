@@ -2,8 +2,8 @@
 import { brand } from '../config/brand';
 import IconSymbols from '../components/IconSymbols.astro';
 import '../styles/global.css';
-interface Props { title?: string; description?: string }
-const { title = brand.title, description = brand.description } = Astro.props;
+interface Props { title?: string; description?: string; noindex?: boolean }
+const { title = brand.title, description = brand.description, noindex = false } = Astro.props;
 ---
 <!doctype html>
 <html lang="pt-BR">
@@ -12,6 +12,7 @@ const { title = brand.title, description = brand.description } = Astro.props;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#101010" />
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
@@ -24,8 +25,5 @@ const { title = brand.title, description = brand.description } = Astro.props;
     <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
     <IconSymbols />
     <slot />
-    <script>
-      import '../scripts/site';
-    </script>
   </body>
 </html>
