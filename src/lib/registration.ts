@@ -71,8 +71,8 @@ export const states = [
 ] as const;
 
 /** Arquivos aceitos nos documentos: fotos do celular ou PDF, até 10 MB cada. */
-/** Prazo de resposta da AP e intervalo mínimo entre cadastros do mesmo CPF (o banco usa o mesmo número). */
-export const REGISTRATION_DAYS = 45;
+/** Prazo para a AP dar o retorno do cadastro. */
+export const RESPONSE_DAYS = 45;
 
 export const DOCUMENT_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif', 'application/pdf'] as const;
 export const DOCUMENT_MAX_BYTES = 10 * 1024 * 1024;

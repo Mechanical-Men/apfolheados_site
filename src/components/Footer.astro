@@ -12,10 +12,10 @@ const { company } = brand;
       <p>Detalhes que acompanham o dia a dia.<br>Uma história que continua com você.</p>
       <a class="back-top" href="#topo">VOLTAR AO TOPO ↑</a>
     </div>
-    {/* Dados da empresa em src/config/brand.ts. [PREENCHER: os valores atuais são mock] */}
+    {/* Dados da empresa em src/config/brand.ts. [PREENCHER: o Instagram ainda é mock] */}
     <div class="footer-company">
       <address>
-        {/* Razão social escondida até termos a oficial (brand.company.legalName). */}
+        <strong>{company.legalName}</strong>
         <span>CNPJ {company.cnpj}</span>
         <span>{company.city}</span>
       </address>

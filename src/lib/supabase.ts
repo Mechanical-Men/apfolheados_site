@@ -41,8 +41,8 @@ export async function uploadDocument(path: string, file: File) {
   if (!response.ok) throw new Error(`Envio do documento recusado (${response.status}): ${await response.text().catch(() => '')}`);
 }
 
-/** O CPF já tem outro cadastro nos últimos 45 dias (regra no banco, ver pode_cadastrar). */
-export class RecentRegistrationError extends Error {}
+/** O CPF já tem um cadastro (regra no banco, ver pode_cadastrar: por enquanto 1 por CPF, sem prazo). */
+export class CpfAlreadyRegisteredError extends Error {}
 
 /**
  * Consulta antes de enviar os documentos, para não subir arquivos de quem será barrado.
@@ -97,6 +97,6 @@ export async function registerApplication(id: string, data: Registration, paths:
     keepalive: true,
   });
   // SQLSTATE PT409 vira HTTP 409 no PostgREST.
-  if (response.status === 409) throw new RecentRegistrationError();
+  if (response.status === 409) throw new CpfAlreadyRegisteredError();
   if (!response.ok) throw new Error(`Cadastro recusado (${response.status}): ${await response.text().catch(() => '')}`);
 }

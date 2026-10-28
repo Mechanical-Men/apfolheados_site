@@ -1,11 +1,11 @@
 import { brand } from '../config/brand';
 import { faqMessage, validPhone, whatsappUrl } from '../lib/catalog';
 import {
-  REGISTRATION_DAYS, documentError, formatBytes, formatCep, formatCpf, formatDate, formatPhone, readRegistration, validBirthDate,
+  RESPONSE_DAYS, documentError, formatBytes, formatCep, formatCpf, formatDate, formatPhone, readRegistration, validBirthDate,
   validCep, validCpf, validInstagram, type Registration,
 } from '../lib/registration';
 import {
-  RecentRegistrationError, canRegister, documentPath, registerApplication, supabaseConfigured, uploadDocument, type DocumentKind,
+  CpfAlreadyRegisteredError, canRegister, documentPath, registerApplication, supabaseConfigured, uploadDocument, type DocumentKind,
 } from '../lib/supabase';
 import { element, escapeHtml, icon, showDialog } from './shell';
 
@@ -23,7 +23,7 @@ async function submitRegistration(data: Registration, files: RegistrationFiles):
   if (!supabaseConfigured) return 'not-configured';
   if (uploaded.size === 0) {
     showStatus('info', '<strong>Conferindo o CPF…</strong> Não feche esta página.');
-    if (!await canRegister(applicationId, data.cpf)) throw new RecentRegistrationError();
+    if (!await canRegister(applicationId, data.cpf)) throw new CpfAlreadyRegisteredError();
   }
   const paths: Record<DocumentKind, string[]> = { documento: [], comprovante: [] };
   const queue = (['documento', 'comprovante'] as const).flatMap(kind => files[kind].map((file, index) => ({ kind, file, index })));
@@ -210,19 +210,25 @@ form.addEventListener('click', event => {
 function showSuccess(whatsapp: string) {
   element('#resource-title').textContent = 'Cadastro enviado!';
   element('#resource-content').innerHTML = `
-    <p>Recebemos os seus dados e documentos. A equipe da AP tem um prazo de até ${REGISTRATION_DAYS} dias para analisar o seu cadastro e dar o retorno.</p>
+    <p>Recebemos os seus dados e documentos. A equipe da AP tem um prazo de até ${RESPONSE_DAYS} dias para analisar o seu cadastro e dar o retorno.</p>
     <p>O retorno será dado pelo WhatsApp informado no cadastro: <strong class="phone">${escapeHtml(whatsapp)}</strong>. Fique de olho nas mensagens.</p>
     <a class="button black" href="/">Voltar para o site ${icon('arrow')}</a>`;
   showDialog('resource-dialog');
 }
 
-function showRecentRegistration() {
+function showCpfAlreadyRegistered() {
   const cpfField = input('cpf');
   const error = errorFor(cpfField)!;
   cpfField.setAttribute('aria-invalid', 'true');
-  error.textContent = `Este CPF já fez um cadastro nos últimos ${REGISTRATION_DAYS} dias.`;
+  error.textContent = 'Este CPF já tem um cadastro na AP.';
   error.hidden = false;
-  showStatus('error', `<strong>Já recebemos um cadastro com este CPF.</strong> Cada CPF pode fazer 1 cadastro a cada ${REGISTRATION_DAYS} dias, e a resposta chega pelo WhatsApp informado nele. Se precisar corrigir algum dado, fale com a AP pelo WhatsApp <a class="phone" href="${whatsappUrl(faqMessage)}" target="_blank" rel="noopener">${brand.whatsappDisplay}</a>.`);
+  showStatus('error', '<strong>Cadastro não enviado.</strong> Este CPF já tem um cadastro na AP.');
+  element('#resource-title').textContent = 'Este CPF já tem cadastro.';
+  element('#resource-content').innerHTML = `
+    <p>Já recebemos um cadastro com este CPF, e cada CPF pode fazer só 1 cadastro. Por isso, este não foi enviado.</p>
+    <p>A resposta do cadastro anterior chega pelo WhatsApp informado nele, em até ${RESPONSE_DAYS} dias. Se precisar corrigir algum dado ou tiver dúvidas, fale com a AP pelo WhatsApp <strong class="phone">${brand.whatsappDisplay}</strong>.</p>
+    <a class="button black" href="${whatsappUrl(faqMessage, brand.whatsapp)}" target="_blank" rel="noopener noreferrer">Falar com a AP ${icon('message')}</a>`;
+  showDialog('resource-dialog');
 }
 
 function showStatus(kind: 'error' | 'info' | 'success', html: string) {
@@ -254,11 +260,11 @@ form.addEventListener('submit', async event => {
       instagramField.hidden = true;
       instagram.required = false;
       counter.textContent = '0 / 1500';
-      showStatus('success', `<strong>Cadastro enviado!</strong> A AP dá o retorno em até ${REGISTRATION_DAYS} dias, pelo WhatsApp informado.`);
+      showStatus('success', `<strong>Cadastro enviado!</strong> A AP dá o retorno em até ${RESPONSE_DAYS} dias, pelo WhatsApp informado.`);
       showSuccess(formatPhone(data.whatsapp));
     }
   } catch (error) {
-    if (error instanceof RecentRegistrationError) showRecentRegistration();
+    if (error instanceof CpfAlreadyRegisteredError) showCpfAlreadyRegistered();
     else {
       console.warn('[cadastro] Envio falhou:', error);
       showStatus('error', '<strong>Não foi possível enviar agora.</strong> Verifique a sua internet e tente de novo. Os dados preenchidos continuam aqui.');

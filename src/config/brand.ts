@@ -14,8 +14,7 @@ export const brand = {
   // [PREENCHER: usuário do Instagram, sem @] (mock)
   instagramUser: 'apfolheados',
   company: {
-    // [PREENCHER: razão social oficial] (mock; escondida no rodapé até ser preenchida)
-    legalName: 'AP Folheados Ltda.',
+    legalName: 'Patyana Comércio de Folheados Ltda',
     cnpj: '06.339.073/0001-99',
     city: 'Itaperuna, RJ',
   },
