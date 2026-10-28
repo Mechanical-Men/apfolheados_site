@@ -8,22 +8,16 @@ export const brand = {
   tagline: 'Brilho que dura.',
   title: 'AP Folheados — Semijoias para revender',
   description: 'AP Folheados. Semijoias com banho reforçado e revenda em consignado para revendedoras de Itaperuna, Rio, Minas e Espírito Santo há mais de 30 anos.',
-  // [PREENCHER: número oficial do WhatsApp, com 55 + DDD, só dígitos] (mock)
-  whatsapp: '5522999999999',
-  // [PREENCHER: número do WhatsApp como deve aparecer no site] (mock)
-  whatsappDisplay: '(22) 99999-9999',
+  // WhatsApp oficial: 55 + DDD + número, só dígitos.
+  whatsapp: '5522999264479',
+  whatsappDisplay: '(22) 99926-4479',
   // [PREENCHER: usuário do Instagram, sem @] (mock)
   instagramUser: 'apfolheados',
   company: {
-    // [PREENCHER: razão social] (mock)
+    // [PREENCHER: razão social oficial] (mock; escondida no rodapé até ser preenchida)
     legalName: 'AP Folheados Ltda.',
-    // [PREENCHER: CNPJ] (mock)
-    cnpj: '00.000.000/0001-00',
-    // [PREENCHER: endereço completo] (mock)
-    address: 'Rua Exemplo, 123, Centro',
+    cnpj: '06.339.073/0001-99',
     city: 'Itaperuna, RJ',
-    // [PREENCHER: dias e horários de atendimento] (mock)
-    hours: 'Segunda a sexta, das 8h às 18h · Sábado, das 8h às 12h',
   },
 } as const;
 

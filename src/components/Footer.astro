@@ -15,10 +15,9 @@ const { company } = brand;
     {/* Dados da empresa em src/config/brand.ts. [PREENCHER: os valores atuais são mock] */}
     <div class="footer-company">
       <address>
-        <strong>{company.legalName}</strong>
+        {/* Razão social escondida até termos a oficial (brand.company.legalName). */}
         <span>CNPJ {company.cnpj}</span>
-        <span>{company.address}, {company.city}</span>
-        <span>Atendimento: {company.hours}</span>
+        <span>{company.city}</span>
       </address>
       <div class="footer-contact">
         <a href={whatsappUrl('Olá, AP Folheados!', brand.whatsapp)} target="_blank" rel="noopener noreferrer"><Icon name="message" />WhatsApp {brand.whatsappDisplay}</a>
