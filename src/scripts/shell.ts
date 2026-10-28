@@ -60,8 +60,6 @@ export function showPrivacy() {
     <p>Os dados e os documentos enviados no cadastro ficam guardados em um servidor, com acesso restrito à equipe da AP Folheados. Eles são usados para analisar o seu cadastro, falar com você e, se a parceria for aprovada, organizar a revenda.</p>
     <p>Guardamos esses dados enquanto durar a parceria. Se o cadastro não for aprovado, eles são apagados em até 6 meses.</p>
     <p>Você pode pedir a qualquer momento para ver, corrigir ou apagar os seus dados pelo WhatsApp ${brand.whatsappDisplay}.</p>
-    <h3>Contato pela página inicial</h3>
-    <p>O formulário de contato da página inicial só prepara a mensagem que você decide enviar pelo WhatsApp. Ele não grava os campos em um servidor.</p>
     <p>Ao abrir o WhatsApp, o uso do aplicativo segue as condições e políticas do serviço.</p>`;
   showDialog('resource-dialog');
 }

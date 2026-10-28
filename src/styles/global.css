@@ -231,7 +231,13 @@ html:not(.js-enabled) .carousel-controls,html:not(.js-enabled) .carousel-dots{di
 .contact-location p{font-size:var(--fs-caption);margin-top:6px;color:rgba(246,240,230,.75)}
 .social-link{display:inline-flex;align-items:center;gap:10px;min-height:var(--touch);margin-top:8px;font-size:var(--fs-action);color:var(--light-gold)}
 .social-link .icon{width:19px;height:19px}
-.contact-form{padding-top:20px;display:grid;gap:24px}
+.contact-cta{display:grid;gap:22px;align-content:start;padding:44px 40px;border:1px solid rgba(217,181,106,.35);background:rgba(246,240,230,.03)}
+.contact-cta h3{font-size:42px;line-height:1.05;letter-spacing:-.02em}
+.contact-cta>p{font-size:var(--fs-text);line-height:var(--lh-text);color:rgba(246,240,230,.8)}
+.contact-checklist{padding-top:18px;border-top:1px solid rgba(246,240,230,.2)}
+.contact-checklist ul{margin:10px 0 0;padding-left:18px;font-size:var(--fs-caption);line-height:1.8;color:rgba(246,240,230,.8)}
+.contact-cta>.button{width:100%;margin-top:6px}
+.contact-alt{font-size:var(--fs-caption);line-height:1.5;color:rgba(246,240,230,.75)}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:24px}
 .field{display:grid;gap:9px}
 .field label{font-size:12px;font-weight:600;letter-spacing:.13em;color:var(--light-gold)}
@@ -242,7 +248,6 @@ html:not(.js-enabled) .carousel-controls,html:not(.js-enabled) .carousel-dots{di
 .field input:focus,.field select:focus{border-color:var(--light-gold)}
 .field input:focus-visible,.field select:focus-visible{outline:2px solid var(--light-gold);outline-offset:2px}
 .field input[aria-invalid=true]{border-color:#efc7ac}
-.contact-form>.button{width:100%;margin-top:3px}
 .form-note{font-size:var(--fs-caption);line-height:var(--lh-text);color:rgba(246,240,230,.7);max-width:470px}
 
 /* Cadastro de revendedora (/cadastro) */
@@ -352,9 +357,9 @@ dialog::backdrop{background:rgba(16,16,16,.75);backdrop-filter:blur(6px)}
 .piece-options button,.piece-options a{display:flex;align-items:center;gap:7px;min-height:var(--touch);padding:0}
 .piece-options .icon{width:15px;height:15px}
 .resource-dialog h3{font:500 var(--fs-text) var(--sans);margin:20px 0 10px}
-.resource-dialog p,.contact-dialog>p{font-size:var(--fs-text);line-height:var(--lh-text);margin:0 0 20px}
+.resource-dialog p{font-size:var(--fs-text);line-height:var(--lh-text);margin:0 0 20px}
 .resource-dialog ul{font-size:var(--fs-text);padding-left:20px;line-height:var(--lh-text)}
-.resource-dialog textarea,.contact-dialog textarea{width:100%;border:1px solid var(--line);background:transparent;color:var(--black);padding:17px;font-size:16px;line-height:var(--lh-text);resize:vertical;min-height:150px}
+.resource-dialog textarea{width:100%;border:1px solid var(--line);background:transparent;color:var(--black);padding:17px;font-size:16px;line-height:var(--lh-text);resize:vertical;min-height:150px}
 .dialog-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
 .dialog-actions .button{gap:15px}
 .resource-dialog .button{margin-top:25px}
@@ -523,7 +528,8 @@ body.menu-open .menu-toggle span+span{transform:translateY(-4px) rotate(-45deg)}
 .contact h2{font-size:64px;margin-top:18px}
 .contact-copy>p{max-width:100%}
 .contact-location{margin-top:30px}
-.contact-form{padding-top:0;gap:22px}
+.contact-cta{padding:30px 22px}
+.contact-cta h3{font-size:34px}
 .form-row{gap:22px}
 .footer{padding-top:35px}
 .footer-top{gap:20px 25px;padding-bottom:24px}

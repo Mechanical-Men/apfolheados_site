@@ -2,8 +2,7 @@ import { brand } from '../config/brand';
 import { careGuideText, careTips, clientMessageTemplate } from '../data/content';
 import { categoryLabel, productTitle, type Product } from '../data/products';
 import {
-  PAGE_SIZE, contactMessage, filterProducts, shareMessage, validPhone, whatsappUrl,
-  type CatalogCategory, type ContactValues,
+  PAGE_SIZE, filterProducts, shareMessage, whatsappUrl, type CatalogCategory,
 } from '../lib/catalog';
 import { copyText, element, escapeHtml, icon, reducedMotion, showDialog, toast } from './shell';
 
@@ -111,38 +110,6 @@ document.addEventListener('click', async event => {
     renderCatalog();
     element<HTMLButtonElement>('[data-category="todas"]').focus({ preventScroll: true });
   }
-});
-
-const form = element<HTMLFormElement>('#resale-form');
-const phone = element<HTMLInputElement>('#contact-phone');
-form.addEventListener('submit', event => {
-  event.preventDefault();
-  const phoneIsValid = validPhone(phone.value);
-  phone.setCustomValidity(phoneIsValid ? '' : 'Informe um WhatsApp válido com DDD.');
-  phone.setAttribute('aria-invalid', String(!phoneIsValid));
-  if (!form.reportValidity()) return;
-  const fields = new FormData(form);
-  const values: ContactValues = {
-    nome: String(fields.get('nome') || ''), whatsapp: String(fields.get('whatsapp') || ''),
-    cidade: String(fields.get('cidade') || ''), experiencia: String(fields.get('experiencia') || ''),
-    indicacao: String(fields.get('indicacao') || ''),
-  };
-  const message = contactMessage(values);
-  element<HTMLTextAreaElement>('#contact-message').value = message;
-  element<HTMLAnchorElement>('#contact-whatsapp').href = whatsappUrl(message, brand.whatsapp);
-  if (brand.whatsapp) {
-    const link = element('#contact-whatsapp');
-    link.firstChild!.textContent = 'Abrir conversa com a AP ';
-    element('#contact-dialog > p').textContent = 'Confira o texto e abra a conversa com a AP no WhatsApp.';
-  }
-  showDialog('contact-dialog');
-});
-// Only enable a client-only form after the handler has been attached.
-element<HTMLButtonElement>('#resale-form button[type="submit"]').disabled = false;
-phone.addEventListener('input', () => { phone.setCustomValidity(''); phone.removeAttribute('aria-invalid'); });
-element('#contact-copy').addEventListener('click', async () => {
-  const copied = await copyText(element<HTMLTextAreaElement>('#contact-message').value);
-  toast(copied ? 'Mensagem copiada.' : 'Selecione o texto para copiar.');
 });
 
 renderCatalog();

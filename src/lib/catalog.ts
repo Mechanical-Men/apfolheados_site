@@ -17,16 +17,6 @@ export function validPhone(value: string) {
 
 export const shareMessage = (product: Product) => `Olha esta peça da AP Folheados: ${product.name ? `${product.name} (${product.code})` : product.code}. Quer que eu separe para você?`;
 
-export interface ContactValues {
-  nome: string;
-  whatsapp: string;
-  cidade: string;
-  experiencia: string;
-  indicacao: string;
-}
-
-export const contactMessage = (values: ContactValues) => `Olá, AP Folheados! Quero conhecer a parceria de revenda.\n\nMeu nome: ${values.nome.trim()}\nWhatsApp: ${values.whatsapp.trim()}\nCidade: ${values.cidade.trim()}\nSobre mim: ${values.experiencia}${values.indicacao.trim() ? '\nIndicação: ' + values.indicacao.trim() : ''}\n\nPodemos conversar sobre as peças e as condições da parceria?`;
-
 export const faqMessage = 'Olá, AP Folheados! Tenho uma dúvida sobre a revenda.';
 
 export const whatsappUrl = (message: string, number = '') => `https://wa.me/${number.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;

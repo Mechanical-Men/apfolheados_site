@@ -19,27 +19,5 @@ import Icon from './Icon.astro';
 <div id="resource-content">
 </div>
 </dialog>
-<dialog id="contact-dialog" class="contact-dialog" aria-labelledby="contact-title">
-<div class="dialog-heading">
-<div>
-<span class="eyebrow">PRONTA PARA A CONVERSA</span>
-<h2 id="contact-title">A sua <em>mensagem.</em>
-</h2>
-</div>
-<button class="icon-button" aria-label="Fechar mensagem" data-close="contact-dialog">
-<Icon name="close" />
-</button>
-</div>
-<p>Confira o texto e escolha o contato da AP no WhatsApp para enviar.</p>
-<label class="sr-only" for="contact-message">Mensagem preparada</label>
-<textarea id="contact-message" rows="8" readonly>
-</textarea>
-<div class="dialog-actions">
-<a class="button black" id="contact-whatsapp" href="https://wa.me/" target="_blank" rel="noopener noreferrer">Escolher contato no WhatsApp <Icon name="up-right" />
-</a>
-<button class="button outline" id="contact-copy">Copiar mensagem <Icon name="copy" />
-</button>
-</div>
-</dialog>
 <div id="toast" class="toast" role="status" aria-live="polite">
 </div>

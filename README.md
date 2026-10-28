@@ -83,7 +83,7 @@ As categorias precisam ser iguais em `src/data/products.ts` e em `studio-apfolhe
 
 ## Cadastro de revendedoras (Supabase)
 
-A página `/cadastro` (fora do Google, ainda sem link na home) grava no projeto Supabase **mechanicalmen-platform**, no schema `apfolheados`. A migração fica no repositório da plataforma: `supabase/migrations/20261028150000_apfolheados_cadastros.sql`.
+A página `/cadastro` (fora do Google; a home leva para ela pela seção de contato e pelo botão da revenda) grava no projeto Supabase **mechanicalmen-platform**, no schema `apfolheados`. A migração fica no repositório da plataforma: `supabase/migrations/20261028150000_apfolheados_cadastros.sql`.
 
 - **Escrita:** o site usa só a publishable key. Ela envia os documentos para o bucket privado `apfolheados-documentos` (pasta `cadastros/<id>/`) e chama a função `apfolheados.registrar_cadastro()`, que revalida tudo. A chave não lê a tabela nem lista arquivos.
 - **Leitura:** só usuários do Supabase Auth cadastrados em `apfolheados.admins` veem os cadastros e os documentos. Eles podem mudar só o `status`.

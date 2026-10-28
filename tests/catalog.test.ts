@@ -8,7 +8,7 @@ const products: Product[] = [
   { code: 'AP-1120', category: 'brincos', photos: [photo, photo] },
   { code: 'AP-3008', name: 'Anel Solitário', category: 'aneis', photos: [photo] },
 ];
-import { contactMessage, filterProducts, shareMessage, validPhone, whatsappUrl } from '../src/lib/catalog.ts';
+import { faqMessage, filterProducts, shareMessage, validPhone, whatsappUrl } from '../src/lib/catalog.ts';
 
 test('filtro por categoria', () => {
   assert.equal(filterProducts(products, 'todas').length, products.length);
@@ -22,15 +22,12 @@ test('telefone aceita DDD, formatação e código do país', () => {
   for (const phone of ['', '99999-9999', '00000000000', '11111111111', '01234567890', '552299999999999']) assert.equal(validPhone(phone), false, phone);
 });
 
-test('mensagem preserva caracteres e não inclui indicação vazia', () => {
-  const message = contactMessage({ nome: '  Ana & Bia  ', whatsapp: '(22) 99999-9999', cidade: 'Itaperuna / RJ', experiencia: 'Quero começar', indicacao: '  ' });
-  assert.ok(message.includes('Meu nome: Ana & Bia\n'));
-  assert.ok(!message.includes('Indicação:'));
-  const url = new URL(whatsappUrl(message, '+55 (22) 99999-9999'));
+test('link do WhatsApp leva número e mensagem', () => {
+  const url = new URL(whatsappUrl(faqMessage, '+55 (22) 99926-4479'));
   assert.equal(url.hostname, 'wa.me');
-  assert.equal(url.pathname, '/5522999999999');
-  assert.equal(url.searchParams.get('text'), message);
-  assert.equal(new URL(whatsappUrl(message)).pathname, '/');
+  assert.equal(url.pathname, '/5522999264479');
+  assert.equal(url.searchParams.get('text'), faqMessage);
+  assert.equal(new URL(whatsappUrl(faqMessage)).pathname, '/');
 });
 
 test('compartilhamento usa o nome quando existe, senão o código', () => {
