@@ -1,10 +1,13 @@
-import { validPhone } from '../lib/catalog';
+import { brand } from '../config/brand';
+import { faqMessage, validPhone, whatsappUrl } from '../lib/catalog';
 import {
-  documentError, formatBytes, formatCep, formatCpf, formatDate, formatPhone, readRegistration, validBirthDate, validCep, validCpf,
-  validInstagram, type Registration,
+  REGISTRATION_DAYS, documentError, formatBytes, formatCep, formatCpf, formatDate, formatPhone, readRegistration, validBirthDate,
+  validCep, validCpf, validInstagram, type Registration,
 } from '../lib/registration';
-import { documentPath, registerApplication, supabaseConfigured, uploadDocument, type DocumentKind } from '../lib/supabase';
-import { element, escapeHtml, icon } from './shell';
+import {
+  RecentRegistrationError, canRegister, documentPath, registerApplication, supabaseConfigured, uploadDocument, type DocumentKind,
+} from '../lib/supabase';
+import { element, escapeHtml, icon, showDialog } from './shell';
 
 // Página /cadastro: máscaras, busca de CEP, documentos e validação do cadastro de revendedora.
 
@@ -18,6 +21,10 @@ const uploaded = new Map<File, string>();
 /** Envia os documentos ao bucket privado e depois grava o cadastro (ver src/lib/supabase.ts). */
 async function submitRegistration(data: Registration, files: RegistrationFiles): Promise<'sent' | 'not-configured'> {
   if (!supabaseConfigured) return 'not-configured';
+  if (uploaded.size === 0) {
+    showStatus('info', '<strong>Conferindo o CPF…</strong> Não feche esta página.');
+    if (!await canRegister(applicationId, data.cpf)) throw new RecentRegistrationError();
+  }
   const paths: Record<DocumentKind, string[]> = { documento: [], comprovante: [] };
   const queue = (['documento', 'comprovante'] as const).flatMap(kind => files[kind].map((file, index) => ({ kind, file, index })));
   for (const [position, { kind, file, index }] of queue.entries()) {
@@ -200,6 +207,24 @@ form.addEventListener('click', event => {
   input(name).focus();
 });
 
+function showSuccess(whatsapp: string) {
+  element('#resource-title').textContent = 'Cadastro enviado!';
+  element('#resource-content').innerHTML = `
+    <p>Recebemos os seus dados e documentos. A equipe da AP tem um prazo de até ${REGISTRATION_DAYS} dias para analisar o seu cadastro e dar o retorno.</p>
+    <p>O retorno será dado pelo WhatsApp informado no cadastro: <strong class="phone">${escapeHtml(whatsapp)}</strong>. Fique de olho nas mensagens.</p>
+    <a class="button black" href="/">Voltar para o site ${icon('arrow')}</a>`;
+  showDialog('resource-dialog');
+}
+
+function showRecentRegistration() {
+  const cpfField = input('cpf');
+  const error = errorFor(cpfField)!;
+  cpfField.setAttribute('aria-invalid', 'true');
+  error.textContent = `Este CPF já fez um cadastro nos últimos ${REGISTRATION_DAYS} dias.`;
+  error.hidden = false;
+  showStatus('error', `<strong>Já recebemos um cadastro com este CPF.</strong> Cada CPF pode fazer 1 cadastro a cada ${REGISTRATION_DAYS} dias, e a resposta chega pelo WhatsApp informado nele. Se precisar corrigir algum dado, fale com a AP pelo WhatsApp <a class="phone" href="${whatsappUrl(faqMessage)}" target="_blank" rel="noopener">${brand.whatsappDisplay}</a>.`);
+}
+
 function showStatus(kind: 'error' | 'info' | 'success', html: string) {
   status.className = `form-status is-${kind}`;
   status.innerHTML = html;
@@ -218,7 +243,8 @@ form.addEventListener('submit', async event => {
   submit.disabled = true;
   status.hidden = true;
   try {
-    const result = await submitRegistration(readRegistration(new FormData(form)), selected);
+    const data = readRegistration(new FormData(form));
+    const result = await submitRegistration(data, selected);
     if (result === 'not-configured') {
       showStatus('info', '<strong>Tudo certo com o preenchimento.</strong> Este formulário ainda está em teste: o envio para a AP será ligado em breve, então os dados não foram enviados.');
     } else {
@@ -228,14 +254,19 @@ form.addEventListener('submit', async event => {
       instagramField.hidden = true;
       instagram.required = false;
       counter.textContent = '0 / 1500';
-      showStatus('success', '<strong>Cadastro enviado!</strong> A equipe da AP vai analisar os seus dados e entrar em contato pelo WhatsApp.');
+      showStatus('success', `<strong>Cadastro enviado!</strong> A AP dá o retorno em até ${REGISTRATION_DAYS} dias, pelo WhatsApp informado.`);
+      showSuccess(formatPhone(data.whatsapp));
     }
   } catch (error) {
-    console.warn('[cadastro] Envio falhou:', error);
-    showStatus('error', '<strong>Não foi possível enviar agora.</strong> Verifique a sua internet e tente de novo. Os dados preenchidos continuam aqui.');
+    if (error instanceof RecentRegistrationError) showRecentRegistration();
+    else {
+      console.warn('[cadastro] Envio falhou:', error);
+      showStatus('error', '<strong>Não foi possível enviar agora.</strong> Verifique a sua internet e tente de novo. Os dados preenchidos continuam aqui.');
+    }
   } finally {
     submit.disabled = false;
-    status.focus();
+    // Com o pop-up aberto o foco fica nele.
+    if (!document.querySelector('dialog[open]')) status.focus();
   }
 });
 

@@ -317,6 +317,8 @@ html:not(.js-enabled) .carousel-controls,html:not(.js-enabled) .carousel-dots{di
 .form-status.is-error{border-color:#efc7ac}
 .form-status.is-error strong{color:#efc7ac}
 .form-status:focus{outline:none}
+.form-status a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+.phone{white-space:nowrap}
 
 .footer{padding:45px 0 30px;border-top:1px solid rgba(246,240,230,.17)}
 .footer-top{display:flex;align-items:center;justify-content:space-between;gap:40px;padding-bottom:35px}

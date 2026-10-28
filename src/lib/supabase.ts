@@ -41,6 +41,26 @@ export async function uploadDocument(path: string, file: File) {
   if (!response.ok) throw new Error(`Envio do documento recusado (${response.status}): ${await response.text().catch(() => '')}`);
 }
 
+/** O CPF já tem outro cadastro nos últimos 45 dias (regra no banco, ver pode_cadastrar). */
+export class RecentRegistrationError extends Error {}
+
+/**
+ * Consulta antes de enviar os documentos, para não subir arquivos de quem será barrado.
+ * Se a consulta falhar, segue: registrar_cadastro() aplica a mesma regra.
+ */
+export async function canRegister(id: string, cpf: string) {
+  try {
+    const response = await fetch(`${URL_BASE}/rest/v1/rpc/pode_cadastrar`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Content-Profile': SCHEMA, apikey: KEY },
+      body: JSON.stringify({ p_id: id, p_cpf: cpf }),
+    });
+    return response.ok ? await response.json() !== false : true;
+  } catch {
+    return true;
+  }
+}
+
 export async function registerApplication(id: string, data: Registration, paths: Record<DocumentKind, string[]>) {
   const response = await fetch(`${URL_BASE}/rest/v1/rpc/registrar_cadastro`, {
     method: 'POST',
@@ -76,5 +96,7 @@ export async function registerApplication(id: string, data: Registration, paths:
     // sobrevive ao fechamento da aba logo depois do envio
     keepalive: true,
   });
+  // SQLSTATE PT409 vira HTTP 409 no PostgREST.
+  if (response.status === 409) throw new RecentRegistrationError();
   if (!response.ok) throw new Error(`Cadastro recusado (${response.status}): ${await response.text().catch(() => '')}`);
 }
