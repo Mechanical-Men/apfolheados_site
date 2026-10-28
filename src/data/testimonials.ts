@@ -8,7 +8,7 @@ export interface Testimonial {
 }
 
 /**
- * Depoimentos de sacoleiras. Para adicionar mais, inclua um item neste array.
+ * Depoimentos de revendedoras. Para adicionar mais, inclua um item neste array.
  * [PREENCHER: depoimentos reais, com nome, cidade e tempo de revenda autorizados] (mock)
  * Os depoimentos abaixo são fictícios e NÃO podem ir ao ar.
  */

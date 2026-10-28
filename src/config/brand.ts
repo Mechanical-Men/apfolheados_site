@@ -7,7 +7,7 @@ export const brand = {
   name: 'AP Folheados',
   tagline: 'Brilho que dura.',
   title: 'AP Folheados — Semijoias para revender',
-  description: 'AP Folheados. Semijoias com banho reforçado e revenda em consignado para sacoleiras de Itaperuna, Rio, Minas e Espírito Santo há mais de 30 anos.',
+  description: 'AP Folheados. Semijoias com banho reforçado e revenda em consignado para revendedoras de Itaperuna, Rio, Minas e Espírito Santo há mais de 30 anos.',
   // [PREENCHER: número oficial do WhatsApp, com 55 + DDD, só dígitos] (mock)
   whatsapp: '5522999999999',
   // [PREENCHER: número do WhatsApp como deve aparecer no site] (mock)

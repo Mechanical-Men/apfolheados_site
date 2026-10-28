@@ -7,7 +7,7 @@ import { initials, testimonials } from '../data/testimonials';
     <div class="section-top">
       <div>
         <span class="eyebrow">05 / QUEM JÁ VENDE AP</span>
-        <h2>Sacoleiras que <em>confiam</em></h2>
+        <h2>Revendedoras que <em>confiam</em></h2>
       </div>
       <div class="carousel-controls">
         <button class="carousel-button" data-carousel-pause aria-controls="testimonial-track" aria-pressed="false" aria-label="Pausar a rotação dos depoimentos"><Icon name="pause" /></button>
@@ -16,7 +16,7 @@ import { initials, testimonials } from '../data/testimonials';
       </div>
     </div>
     {/* Depoimentos em src/data/testimonials.ts. [PREENCHER: os atuais são mock] */}
-    <ul id="testimonial-track" class="testimonial-list" role="list" aria-label="Depoimentos de sacoleiras" tabindex="0">
+    <ul id="testimonial-track" class="testimonial-list" role="list" aria-label="Depoimentos de revendedoras" tabindex="0">
       {testimonials.map((item, index) => (
         <li class="testimonial-card" aria-label={`Depoimento ${index + 1} de ${testimonials.length}`}>
           <blockquote>“{item.quote}”</blockquote>
