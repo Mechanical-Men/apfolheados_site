@@ -28,8 +28,15 @@ export function formatCep(value: string) {
   return d.length > 5 ? `${d.slice(0, 5)}-${d.slice(5)}` : d;
 }
 
+/**
+ * Telefone como (22) 99999-9999. Tira o código do país e o 0 da frente: quem digita
+ * ou cola +55 22 99999-9999 (ou o celular preenche assim) não perde os 2 últimos números.
+ * Com mais de 11 números, o 55 só pode ser o país (DDD + número têm no máximo 11).
+ */
 export function formatPhone(value: string) {
-  const d = digits(value).slice(0, 11);
+  let d = digits(value).replace(/^0+/, '');
+  if (d.length > 11 && d.startsWith('55')) d = d.slice(2);
+  d = d.slice(0, 11);
   if (d.length <= 2) return d.length ? `(${d}` : '';
   const local = d.slice(2);
   const split = local.length > 8 ? 5 : 4;

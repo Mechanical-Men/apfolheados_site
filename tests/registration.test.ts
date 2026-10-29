@@ -18,6 +18,12 @@ test('máscaras de CPF, CEP e telefone', () => {
   assert.equal(formatPhone('22999998888'), '(22) 99999-8888');
   assert.equal(formatPhone('2238221234'), '(22) 3822-1234');
   assert.equal(formatPhone('2'), '(2');
+  for (const phone of ['+55 (22) 99999-8888', '+55 22 99999-8888', '5522999998888', '+5522999998888', '022999998888', '(22) 99999-8888']) {
+    assert.equal(formatPhone(phone), '(22) 99999-8888', phone);
+  }
+  assert.equal(formatPhone('+55 22 3822-1234'), '(22) 3822-1234');
+  // DDD 55 (RS) sem código do país continua valendo.
+  assert.equal(formatPhone('55999998888'), '(55) 99999-8888');
   assert.equal(validCep('28300-000'), true);
   assert.equal(validCep('2830-000'), false);
 });
