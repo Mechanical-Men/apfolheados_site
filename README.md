@@ -90,3 +90,19 @@ A página `/cadastro` (fora do Google; a home leva para ela pela seção de cont
 - **Variáveis:** `PUBLIC_SUPABASE_URL` e `PUBLIC_SUPABASE_PUBLISHABLE_KEY` (ver `.env.example`). Configure as duas também na Vercel. Sem elas, o formulário valida mas avisa que o envio não está ligado.
 - **Código:** `src/lib/supabase.ts` (envio), `src/lib/registration.ts` (regras e formatos) e `src/scripts/cadastro.ts` (página).
 
+
+## Painel dos cadastros (/admin)
+
+A página `/admin` (fora do Google e sem link no site) mostra os cadastros de revendedora. Os donos filtram por status, buscam por nome, cidade, CPF ou telefone, veem os documentos e mudam o status (Novo, Em análise, Aprovado, Reprovado).
+
+- **Acesso:** login com e-mail e senha do Supabase Auth. Só entra quem está em `apfolheados.admins`. Um usuário de outro cliente do projeto recebe "Este usuário não tem acesso".
+- **Liberar alguém:** no painel do Supabase, em Authentication > Users > Add user, crie o usuário com e-mail e senha e marque "Auto Confirm User". Depois, no SQL Editor:
+
+  ```sql
+  insert into apfolheados.admins (user_id, email)
+  select id, email from auth.users where email = 'dono@exemplo.com';
+  ```
+
+- **Tirar o acesso:** `delete from apfolheados.admins where email = 'dono@exemplo.com';`
+- **Documentos:** abrem por links temporários, que valem 1 hora. Fotos HEIC (iPhone) aparecem como arquivo para baixar, porque nem todo navegador as mostra.
+- **Código:** `src/lib/admin.ts` (login, leitura, status e documentos), `src/lib/applications.ts` (busca, contagens e datas) e `src/scripts/admin.ts` (página).

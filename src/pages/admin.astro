@@ -1,0 +1,154 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Brand from '../components/Brand.astro';
+import Icon from '../components/Icon.astro';
+import { statuses } from '../lib/applications';
+---
+{/* Área restrita dos donos da AP: lista e análise dos cadastros de revendedora.
+    Só entra quem está em apfolheados.admins (ver src/lib/admin.ts e o README). */}
+<BaseLayout title="Cadastros — AP Folheados" description="Área restrita da AP Folheados." noindex>
+  <div class="admin">
+    <header class="admin-top">
+      <Brand />
+      <button type="button" class="admin-link" id="admin-sign-out" hidden>Sair</button>
+    </header>
+
+    <main id="conteudo" class="admin-main">
+      <section id="admin-login" class="admin-login" hidden>
+        <span class="eyebrow light">ÁREA RESTRITA</span>
+        <h1>Cadastros de <em>revendedora.</em></h1>
+        <p class="admin-message" id="admin-login-message" hidden></p>
+        <form id="admin-login-form" novalidate>
+          <div class="field">
+            <label for="admin-email">E-MAIL</label>
+            <input id="admin-email" name="email" type="email" autocomplete="username" required>
+          </div>
+          <div class="field">
+            <label for="admin-password">SENHA</label>
+            <input id="admin-password" name="password" type="password" autocomplete="current-password" required>
+          </div>
+          <p class="field-error" id="admin-login-error" role="alert" hidden></p>
+          <button class="button ivory" type="submit">Entrar <Icon name="arrow" /></button>
+        </form>
+      </section>
+
+      <section id="admin-loading" class="admin-center" hidden aria-busy="true">
+        <p>Carregando os cadastros…</p>
+      </section>
+
+      <section id="admin-not-configured" class="admin-center" hidden>
+        <h1>Não configurado.</h1>
+        <p>Faltam as variáveis <code>PUBLIC_SUPABASE_URL</code> e <code>PUBLIC_SUPABASE_PUBLISHABLE_KEY</code> neste build.</p>
+      </section>
+
+      <section id="admin-list" hidden>
+        <div class="admin-heading">
+          <h1>Cadastros</h1>
+          <button type="button" class="admin-link" id="admin-reload">Atualizar</button>
+        </div>
+        <div class="admin-filters" role="group" aria-label="Filtrar por status">
+          <button type="button" data-status="todos" aria-pressed="true">Todos <span data-count="todos">0</span></button>
+          {statuses.map(status => (
+            <button type="button" data-status={status.value} aria-pressed="false">{status.label} <span data-count={status.value}>0</span></button>
+          ))}
+        </div>
+        <div class="field admin-search">
+          <label for="admin-search" class="sr-only">Buscar</label>
+          <input id="admin-search" type="search" placeholder="Nome, cidade, CPF ou telefone" autocomplete="off">
+        </div>
+        <p class="form-status is-error" id="admin-list-error" role="alert" hidden></p>
+        <p class="admin-count" id="admin-count" aria-live="polite"></p>
+        <ul class="admin-cards" id="admin-cards"></ul>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="application-dialog" class="application-dialog" aria-labelledby="application-title">
+    <button class="dialog-close icon-button" aria-label="Fechar" data-close="application-dialog"><Icon name="close" /></button>
+    <div id="application-content"></div>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    import '../scripts/admin';
+  </script>
+</BaseLayout>
+
+<style is:global>
+  .admin{min-height:100svh}
+  .admin-top,.admin-main{width:min(1100px,calc(100% - 32px));margin:auto}
+  .admin-top{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid rgba(217,181,106,.2)}
+  .admin-link{min-height:var(--touch);padding:0 4px;font-size:var(--fs-action);font-weight:500;color:var(--light-gold);text-decoration:underline;text-underline-offset:4px}
+  .admin-link:hover{color:var(--ivory)}
+  .admin-main{padding:48px 0 80px}
+  .admin [hidden]{display:none !important}
+  .admin-center{text-align:center;padding:80px 0;color:rgba(246,240,230,.8)}
+  .admin-center h1{font-size:44px;color:var(--ivory);margin-bottom:16px}
+
+  .admin-login{max-width:440px;margin:auto}
+  .admin-login h1{font-size:clamp(44px,8vw,60px);line-height:1;margin:18px 0 32px}
+  .admin-login h1 em{color:var(--light-gold)}
+  .admin-login form{display:grid;gap:22px}
+  .admin-login .button{justify-content:space-between;margin-top:6px}
+  .admin-message{margin-bottom:24px;padding:14px 18px;border:1px solid rgba(217,181,106,.4);font-size:var(--fs-caption)}
+
+  .admin-heading{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:24px}
+  .admin-heading h1{font-size:clamp(44px,7vw,60px)}
+  .admin-filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+  .admin-filters button{display:inline-flex;align-items:center;gap:10px;min-height:var(--touch);padding:0 16px;border:1px solid rgba(217,181,106,.4);font-size:var(--fs-action);font-weight:500;color:rgba(246,240,230,.85)}
+  .admin-filters button span{font-variant-numeric:tabular-nums;color:var(--light-gold)}
+  .admin-filters button[aria-pressed=true]{background:var(--ivory);border-color:var(--ivory);color:var(--black)}
+  .admin-filters button[aria-pressed=true] span{color:var(--gold)}
+  .admin-search{margin-bottom:12px}
+  .admin-search input{-webkit-appearance:none;appearance:none}
+  .admin-count{font-size:var(--fs-caption);color:rgba(246,240,230,.7);margin:8px 0 16px}
+  #admin-list-error{margin-bottom:16px}
+
+  .admin-cards{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+  .admin-card{width:100%;height:100%;display:grid;align-content:start;gap:6px;text-align:left;padding:20px;border:1px solid rgba(217,181,106,.28);background:rgba(246,240,230,.04);transition:border-color .2s,background .2s}
+  .admin-card:hover{border-color:var(--light-gold);background:rgba(246,240,230,.07)}
+  .admin-card strong{font:500 26px/1.1 var(--serif);margin:8px 0 2px}
+  .admin-card span{font-size:var(--fs-caption);color:rgba(246,240,230,.85)}
+  .admin-card small{font-size:var(--fs-label);color:rgba(246,240,230,.65);margin-top:6px}
+  .admin-card .phone-warning{color:#efc7ac}
+
+  .status-badge{justify-self:start;display:inline-block;padding:3px 10px;font-size:var(--fs-label);font-weight:600;letter-spacing:.08em;text-transform:uppercase;border:1px solid currentColor}
+  .admin-card .status-badge.is-novo{color:var(--light-gold)}
+  .admin-card .status-badge.is-em_analise{color:#a9c4e4}
+  .admin-card .status-badge.is-aprovado{color:#9fd3a6}
+  .admin-card .status-badge.is-reprovado{color:#efa6a0}
+
+  .application-dialog{width:760px}
+  .application-dialog h2{font-size:clamp(34px,6vw,46px);margin:10px 0 22px;padding-right:40px}
+  .application-dialog .eyebrow{color:#7a5a22}
+  .application-dialog section{padding-top:22px;margin-top:22px;border-top:1px solid var(--line)}
+  .application-dialog h3{font:600 var(--fs-label) var(--sans);letter-spacing:.14em;text-transform:uppercase;color:#7a5a22;margin-bottom:14px}
+  .application-dialog dl{display:grid;grid-template-columns:minmax(150px,auto) 1fr;gap:10px 20px;margin:0;font-size:var(--fs-caption);line-height:1.5}
+  .application-dialog dt{color:rgba(16,16,16,.68)}
+  .application-dialog dd{margin:0;overflow-wrap:anywhere}
+  .application-dialog dd a{text-decoration:underline;text-underline-offset:3px}
+  .application-dialog .admin-link{color:#7a5a22;min-height:0;margin-left:8px}
+  .application-dialog .admin-link:hover{color:var(--black)}
+  .application-dialog .motivation{font-size:var(--fs-text);line-height:var(--lh-text);white-space:pre-line}
+  .application-controls{display:flex;flex-wrap:wrap;align-items:end;gap:12px}
+  .application-controls .button{gap:15px;min-height:52px}
+  .application-status{display:grid;gap:8px;flex:1 1 220px}
+  .application-status label{font-size:var(--fs-label);font-weight:600;letter-spacing:.13em;color:#7a5a22}
+  .application-status select{min-height:52px;padding:0 14px;border:1px solid rgba(16,16,16,.35);background:#fff;color:var(--black);font-size:16px;border-radius:0}
+  .application-warning{margin-top:18px;padding:12px 16px;border-left:3px solid #b5542f;background:rgba(181,84,47,.08);font-size:var(--fs-caption);line-height:1.5}
+  .application-documents{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  .application-documents a{display:grid;gap:8px;font-size:var(--fs-action);font-weight:500}
+  .application-documents img{width:100%;aspect-ratio:3/4;object-fit:cover;background:rgba(16,16,16,.06);border:1px solid var(--line)}
+  .application-documents .file-tile{display:grid;place-items:center;aspect-ratio:3/4;border:1px solid var(--line);background:rgba(16,16,16,.04);font-size:var(--fs-label);font-weight:600;letter-spacing:.12em}
+  .application-documents a:hover .file-tile,.application-documents a:hover img{border-color:var(--gold)}
+  .application-meta{margin-top:24px;font-size:var(--fs-label);line-height:1.6;color:rgba(16,16,16,.68)}
+
+  @media(max-width:767px){
+    .admin-main{padding:32px 0 64px}
+    .admin-top .brand-word small{display:none}
+    .admin-cards{grid-template-columns:1fr}
+    .application-dialog dl{grid-template-columns:1fr;gap:2px}
+    .application-dialog dd{margin-bottom:10px}
+    .application-controls .button{width:100%}
+  }
+</style>

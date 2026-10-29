@@ -12,10 +12,10 @@
 
 import type { Registration } from './registration';
 
-const URL_BASE = (import.meta.env.PUBLIC_SUPABASE_URL ?? '').replace(/\/+$/, '');
-const KEY = import.meta.env.PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? '';
-const SCHEMA = 'apfolheados';
-const BUCKET = 'apfolheados-documentos';
+export const URL_BASE = (import.meta.env.PUBLIC_SUPABASE_URL ?? '').replace(/\/+$/, '');
+export const KEY = import.meta.env.PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? '';
+export const SCHEMA = 'apfolheados';
+export const BUCKET = 'apfolheados-documentos';
 
 export const supabaseConfigured = Boolean(URL_BASE && KEY);
 
