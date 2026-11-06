@@ -1,0 +1,33 @@
+---
+import ResellerLayout from '../../../layouts/ResellerLayout.astro';
+import Icon from '../../../components/Icon.astro';
+import { lessons } from '../../../data/reseller';
+---
+<ResellerLayout title="Guia de vendas" active="guia">
+  <section class="area-hero">
+    <div class="wrap">
+      <span class="eyebrow light">GUIA DE VENDAS</span>
+      <h1>Venda mais, <em>com confiança.</em></h1>
+      <p>O essencial para vender semijoias AP: conhecer o produto, atender bem e manter seu ciclo em dia.</p>
+    </div>
+  </section>
+  <section class="area-body section-light">
+    <div class="wrap">
+      <ol class="lesson-list">
+        {lessons.map((lesson, index) => (
+          <li>
+            <a href={`/revendedora/guia/${lesson.slug}`}>
+              <span class="card-mark">{String(index + 1).padStart(2, '0')}</span>
+              <div>
+                <h2>{lesson.menu}</h2>
+                <p>{lesson.intro}</p>
+              </div>
+              {lesson.video && <span class="lesson-tag">VÍDEO</span>}
+              <Icon name="arrow" />
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+</ResellerLayout>

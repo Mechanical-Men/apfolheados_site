@@ -1,0 +1,52 @@
+---
+import ResellerLayout from '../../layouts/ResellerLayout.astro';
+import LessonBlocks from '../../components/LessonBlocks.astro';
+import Icon from '../../components/Icon.astro';
+import { messageGroups, statusWeek } from '../../data/reseller';
+import { whatsappUrl } from '../../lib/catalog';
+import { markFields, richText } from '../../lib/reseller';
+---
+<ResellerLayout title="Mensagens prontas" active="mensagens">
+  <section class="area-hero">
+    <div class="wrap">
+      <span class="eyebrow light">MENSAGENS PRONTAS</span>
+      <h1>Do primeiro contato <em>à cobrança.</em></h1>
+      <p>Toque em copiar, troque o que estiver entre [colchetes] e ajuste para o seu jeito de falar. Emoji é bem-vindo.</p>
+    </div>
+  </section>
+  <section class="area-body section-light">
+    <div class="wrap">
+      <nav class="message-menu" aria-label="Categorias de mensagens">
+        {messageGroups.map(group => <a href={`#${group.id}`}>{group.menu}</a>)}
+        <a href="#semana-de-status">Semana de Status</a>
+      </nav>
+      {messageGroups.map((group, index) => (
+        <section class="message-group" id={group.id}>
+          <span class="eyebrow">{String(index + 1).padStart(2, '0')} / {group.menu.toUpperCase()}</span>
+          <h2>{group.title}</h2>
+          <div class="message-grid">
+            {group.messages.map(message => (
+              <article class="message" data-message={message.text}>
+                <header>
+                  <h3>{message.title}</h3>
+                  {message.tag && <span class="lesson-tag">{message.tag.toUpperCase()}</span>}
+                </header>
+                <p set:html={markFields(message.text)} />
+                {message.note && <p class="card-note" set:html={richText(message.note)} />}
+                <div class="message-actions">
+                  <button type="button" data-copy-message><Icon name="copy" />Copiar</button>
+                  <a href={whatsappUrl(message.text)} target="_blank" rel="noopener noreferrer"><Icon name="message" />Abrir no WhatsApp</a>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ))}
+      <section class="message-group" id="semana-de-status">
+        <span class="eyebrow">UMA SEMANA DE STATUS</span>
+        <h2>O que postar em cada dia.</h2>
+        <LessonBlocks blocks={[{ type: 'week', items: statusWeek }]} />
+      </section>
+    </div>
+  </section>
+</ResellerLayout>

@@ -1,0 +1,94 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Dialogs from '../components/Dialogs.astro';
+import EarningsCalculator from '../components/EarningsCalculator.astro';
+import Icon from '../components/Icon.astro';
+import LessonBlocks from '../components/LessonBlocks.astro';
+import { brand } from '../config/brand';
+import { opportunity } from '../data/reseller';
+import { faqMessage, whatsappUrl } from '../lib/catalog';
+import '../styles/reseller.css';
+---
+<BaseLayout title="Seja revendedora — AP Folheados" description="Venda semijoias de uma marca que Itaperuna e região conhecem há mais de 30 anos, sem precisar investir em estoque. Até 35% de comissão e 40 dias para o acerto.">
+  <Header />
+  <main id="conteudo">
+    <section class="offer-hero">
+      <div class="wrap">
+        <div>
+          <span class="eyebrow light">REVENDA EM CONSIGNAÇÃO</span>
+          <h1>Seu brilho. <em>Seu negócio.</em></h1>
+          <p>Venda semijoias de uma marca que Itaperuna e região conhecem há mais de 30 anos, sem precisar investir em estoque.</p>
+          <ul class="offer-facts">
+            <li><strong>Até 35%</strong> de comissão</li>
+            <li><strong>40 dias</strong> para o acerto</li>
+          </ul>
+          <a class="button ivory" href="/cadastro">Quero ser revendedora AP <Icon name="up-right" /></a>
+        </div>
+        {/* TROCAR FOTO: mesma foto da seção de revenda da home, até haver uma foto real. */}
+        <img src="/assets/revenda.webp" alt="Mãos organizando semijoias no mostruário AP" width="1122" height="1402">
+      </div>
+    </section>
+
+    <section class="area-body section-light">
+      <div class="wrap offer-section">
+        <span class="eyebrow">POR QUE REVENDER AP</span>
+        <h2>Uma oportunidade do seu jeito.</h2>
+        <p class="offer-intro">Você recebe as peças, vende no seu ritmo e acerta com a AP apenas o que vendeu.</p>
+        <LessonBlocks blocks={[{ type: 'cards', items: [...opportunity.reasons] }]} />
+      </div>
+
+      <div class="wrap offer-section">
+        <span class="eyebrow">COMO FUNCIONA</span>
+        <h2>Simples de entender.</h2>
+        <p class="offer-intro">Do cadastro ao acerto, em quatro passos.</p>
+        <LessonBlocks blocks={[{ type: 'cards', items: [...opportunity.steps] }]} />
+      </div>
+
+      <div class="wrap offer-section">
+        <span class="eyebrow">SUAS COMISSÕES</span>
+        <h2>Seu esforço vira resultado.</h2>
+        <p class="offer-intro">Quanto mais você vende, maior a sua comissão. Passou de R$ 350 no ciclo, ela sobe para 35%.</p>
+        <LessonBlocks blocks={[{ type: 'table', head: ['Peças vendidas', 'Total de vendas', 'Sua comissão', 'Você ganha'], rows: opportunity.simulation.map(row => row.map(cell => cell.replace('R$ ', 'R$\u00a0'))) }]} />
+        <p class="offer-note">Valor médio de venda utilizado na simulação: R$ 150 por peça. Os valores são simulações, não previsões ou garantias de rendimento. A comissão é calculada sobre o total vendido no ciclo de 40 dias.</p>
+        <EarningsCalculator />
+      </div>
+      {/* [PREENCHER: depoimentos reais de revendedoras] Os do PDF estão marcados como exemplo. */}
+    </section>
+
+    <section class="faq section-light">
+      <div class="wrap faq-layout">
+        <div>
+          <span class="eyebrow">TIRE SUAS DÚVIDAS</span>
+          <h2>O que você <br><em>precisa saber.</em></h2>
+          <p>Não achou sua dúvida? <a class="inline-link" href={whatsappUrl(faqMessage, brand.whatsapp)} target="_blank" rel="noopener noreferrer">Chame a gente no WhatsApp <Icon name="up-right" /></a></p>
+        </div>
+        <div class="faq-list">
+          {opportunity.faq.map(item => (
+            <details>
+              <summary>{item.question}<span aria-hidden="true">+</span></summary>
+              <p>{item.answer}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="catalog-cta">
+      <div class="wrap">
+        <div>
+          <span class="eyebrow light">O PRÓXIMO CAPÍTULO</span>
+          <h2>Sua história pode <em>brilhar com a AP.</em></h2>
+          <p class="offer-small">Condições sujeitas à análise e formalização da parceria.</p>
+        </div>
+        <a class="button ivory" href="/cadastro">Fazer meu cadastro <Icon name="up-right" /></a>
+      </div>
+    </section>
+  </main>
+  <Footer />
+  <Dialogs />
+  <script>
+    import '../scripts/shell';
+  </script>
+</BaseLayout>

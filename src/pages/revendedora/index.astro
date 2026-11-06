@@ -1,0 +1,52 @@
+---
+import ResellerLayout from '../../layouts/ResellerLayout.astro';
+import EarningsCalculator from '../../components/EarningsCalculator.astro';
+import Icon from '../../components/Icon.astro';
+import { kitFiles, lessons } from '../../data/reseller';
+
+const materials = [
+  { href: '/revendedora/guia', eyebrow: 'PARA APRENDER', title: 'Guia de vendas', text: `${lessons.length} aulas curtas. Veja uma vez com calma e volte sempre que tiver dúvida.` },
+  { href: '/revendedora/mensagens', eyebrow: 'PARA COPIAR E COLAR', title: 'Mensagens prontas', text: 'Roteiros para WhatsApp e Instagram, do primeiro contato à cobrança.' },
+  { href: '/revendedora/cola', eyebrow: 'PARA CONSULTAR', title: 'Cola da revendedora', text: 'O essencial em uma tela. Imprima e deixe junto do kit.' },
+  { href: '/catalogo', eyebrow: 'PARA MOSTRAR', title: 'Catálogo online', text: 'Todos os modelos no site da AP, para enviar às clientes.' },
+];
+---
+<ResellerLayout title="Início" active="inicio">
+  <section class="area-hero">
+    <div class="wrap">
+      <span class="eyebrow light">ÁREA DA REVENDEDORA</span>
+      <h1>Tudo o que você precisa <em>para vender.</em></h1>
+      <p>Use cada material no momento certo. A AP acompanha você do kit ao acerto.</p>
+    </div>
+  </section>
+
+  <section class="area-body section-light">
+    <div class="wrap">
+      <a class="area-start" href="/revendedora/guia/primeiros-30-dias">
+        <span class="eyebrow">ACABOU DE RECEBER O KIT?</span>
+        <strong>Comece pelos seus primeiros 30 dias</strong>
+        <Icon name="arrow" />
+      </a>
+
+      <div class="area-materials">
+        {materials.map(item => (
+          <a href={item.href}>
+            <span class="eyebrow">{item.eyebrow}</span>
+            <h2>{item.title}</h2>
+            <p>{item.text}</p>
+            <Icon name="up-right" />
+          </a>
+        ))}
+      </div>
+
+      <EarningsCalculator />
+
+      <div class="area-downloads">
+        <h2>Prefere em PDF?</h2>
+        <ul>
+          {kitFiles.map(file => <li><a href={file.href} download><Icon name="download" />{file.label}</a></li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+</ResellerLayout>

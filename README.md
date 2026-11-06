@@ -41,6 +41,8 @@ O `package-lock.json` fixa as versões instaladas. Para instalar depois de alter
 | `src/styles/global.css` | Paleta, tipografia, layout e regras responsivas |
 | `src/scripts/site.ts` | Filtros, menu, diálogos, carrossel, FAQ animado e formulário |
 | `src/lib/catalog.ts` | Funções de catálogo e preparação de mensagens |
+| `src/pages/catalogo.astro`, `src/scripts/catalogo.ts` | Página `/catalogo`: busca, categorias, ordenação e link direto da peça (`/catalogo?peca=CODIGO`) |
+| `src/scripts/products.ts` | Cartão, janela da peça e atualização do catálogo, usados na home e em `/catalogo` |
 | `public/assets/` | Fotos do hero e da revenda, logo e favicon |
 | `public/fonts/` | Fontes locais e suas licenças |
 
@@ -64,6 +66,15 @@ Em `src/config/brand.ts`, preencha `whatsapp` com o número confirmado, incluind
 Execute `npm run build` e publique o conteúdo de `dist/` em uma hospedagem estática. Nenhum adaptador de servidor é necessário. O projeto preserva sua configuração de hospedagem do Sites em `.openai/hosting.json`.
 
 Não há dependência de React, banco ou API para esta versão. As fontes incluem suas licenças em `public/fonts/`.
+
+## Área da Revendedora
+
+Aberta, sem login, e fora do Google (`noindex`). `/seja-revendedora` é a página pública para quem ainda vai se cadastrar.
+
+- **Conteúdo:** todos os textos ficam em `src/data/reseller.ts`. As páginas estão em `src/pages/revendedora/`, e as contas da comissão e da calculadora de ganhos em `src/lib/reseller.ts`.
+- **Vídeo de uma aula:** preencha `video` na aula, em `lessons`, com o endereço de incorporação (YouTube ou Vimeo) ou com um arquivo `.mp4`. Sem vídeo, a aula mostra só o texto.
+- **"A confirmar":** o marcador `TO_CONFIRM` aparece no site como etiqueta. Quando a AP confirmar, troque pelo texto real. `npm run preencher` lista o que falta.
+- **PDFs:** ficam em `public/kit`. "Seja Revendedora" não entrou porque os depoimentos ainda são exemplos.
 
 ## Peças (Sanity)
 

@@ -1,0 +1,49 @@
+---
+import ResellerLayout from '../../layouts/ResellerLayout.astro';
+import Icon from '../../components/Icon.astro';
+import { brand } from '../../config/brand';
+import { cheatSheet } from '../../data/reseller';
+---
+<ResellerLayout title="Cola da revendedora" active="cola">
+  <section class="area-hero">
+    <div class="wrap">
+      <span class="eyebrow light">COLA DA REVENDEDORA</span>
+      <h1>O essencial <em>em uma página.</em></h1>
+      <p>Para consultar quando precisar. Imprima e deixe junto do kit.</p>
+      <button type="button" class="button ivory" data-print>Imprimir <Icon name="download" /></button>
+    </div>
+  </section>
+  <section class="area-body section-light">
+    <div class="wrap cheat">
+      <p class="cheat-print-title">AP FOLHEADOS / COLA DA REVENDEDORA</p>
+      <section>
+        <h2>Seu ciclo de 40 dias</h2>
+        <ol>{cheatSheet.cycle.map(item => <li>{item}</li>)}</ol>
+        <p class="cheat-dates">Início: ____ / ____ / ____ &nbsp; Acerto: ____ / ____ / ____</p>
+      </section>
+      <section>
+        <h2>Método BRILHO</h2>
+        <dl class="cheat-brilho">{cheatSheet.brilho.map(([letter, text]) => <><dt>{letter}</dt><dd>{text}</dd></>)}</dl>
+      </section>
+      <section>
+        <h2>Antes de mostrar, pergunte</h2>
+        <ul>{cheatSheet.askFirst.map(item => <li>{item}</li>)}</ul>
+        <h2>Para fechar</h2>
+        <ul>{cheatSheet.close.map(item => <li>{item}</li>)}</ul>
+      </section>
+      <section>
+        <h2>Quando ela hesita</h2>
+        <dl class="cheat-pairs">{cheatSheet.hesitation.map(([doubt, answer]) => <><dt>{doubt}</dt><dd>{answer}</dd></>)}</dl>
+      </section>
+      <section>
+        <h2>Cuidados para ensinar à cliente</h2>
+        <ol>{cheatSheet.care.map(item => <li>{item}</li>)}</ol>
+      </section>
+      <section>
+        <h2>Receber em dia</h2>
+        <ol>{cheatSheet.payment.map(item => <li>{item}</li>)}</ol>
+      </section>
+      <p class="cheat-print-title">Dúvidas? WhatsApp da AP {brand.whatsappDisplay}</p>
+    </div>
+  </section>
+</ResellerLayout>

@@ -1,0 +1,44 @@
+---
+import ResellerLayout from '../../../layouts/ResellerLayout.astro';
+import LessonBlocks from '../../../components/LessonBlocks.astro';
+import Icon from '../../../components/Icon.astro';
+import { lessons, type Lesson } from '../../../data/reseller';
+
+export function getStaticPaths() {
+  return lessons.map((lesson, index) => ({ params: { slug: lesson.slug }, props: { lesson, index } }));
+}
+
+interface Props { lesson: Lesson; index: number }
+const { lesson, index } = Astro.props;
+const previous = lessons[index - 1];
+const next = lessons[index + 1];
+const number = (value: number) => String(value).padStart(2, '0');
+---
+<ResellerLayout title={lesson.menu} active="guia">
+  <section class="area-hero">
+    <div class="wrap">
+      <a class="area-back" href="/revendedora/guia">Guia de vendas</a>
+      <span class="eyebrow light">AULA {number(index + 1)} DE {number(lessons.length)} · {lesson.menu.toUpperCase()}</span>
+      <h1>{lesson.title}</h1>
+      <p>{lesson.intro}</p>
+    </div>
+  </section>
+  <section class="area-body section-light">
+    <div class="wrap lesson">
+      {lesson.video && (
+        <div class="lesson-video">
+          {/\.mp4($|\?)/.test(lesson.video)
+            ? <video src={lesson.video} controls preload="metadata" playsinline></video>
+            : <iframe src={lesson.video} title={`Vídeo: ${lesson.menu}`} loading="lazy" allow="fullscreen; picture-in-picture" allowfullscreen></iframe>}
+        </div>
+      )}
+      <LessonBlocks blocks={lesson.blocks} />
+      <nav class="lesson-pager" aria-label="Outras aulas">
+        {previous ? <a href={`/revendedora/guia/${previous.slug}`}><span>AULA ANTERIOR</span>{previous.menu}</a> : <span></span>}
+        {next
+          ? <a class="is-next" href={`/revendedora/guia/${next.slug}`}><span>PRÓXIMA AULA</span>{next.menu} <Icon name="arrow" /></a>
+          : <a class="is-next" href="/revendedora/mensagens"><span>PRÓXIMO PASSO</span>Mensagens prontas <Icon name="arrow" /></a>}
+      </nav>
+    </div>
+  </section>
+</ResellerLayout>

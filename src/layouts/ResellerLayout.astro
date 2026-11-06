@@ -1,0 +1,46 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Dialogs from '../components/Dialogs.astro';
+import Icon from '../components/Icon.astro';
+import { brand } from '../config/brand';
+import { faqMessage, whatsappUrl } from '../lib/catalog';
+import '../styles/reseller.css';
+
+interface Props { title: string; active: 'inicio' | 'guia' | 'mensagens' | 'cola' }
+const { title, active } = Astro.props;
+const tabs = [
+  { id: 'inicio', href: '/revendedora', label: 'Início' },
+  { id: 'guia', href: '/revendedora/guia', label: 'Guia de vendas' },
+  { id: 'mensagens', href: '/revendedora/mensagens', label: 'Mensagens' },
+  { id: 'cola', href: '/revendedora/cola', label: 'Cola' },
+];
+---
+{/* Aberta, sem login. Fora do Google até decidir quem pode ver os roteiros de venda. */}
+<BaseLayout title={`${title} — Área da Revendedora AP`} description="Materiais de venda para as revendedoras AP Folheados." noindex>
+  <Header />
+  <nav class="area-tabs" aria-label="Área da revendedora">
+    <div class="wrap">
+      {tabs.map(tab => <a href={tab.href} aria-current={tab.id === active ? 'page' : undefined}>{tab.label}</a>)}
+      <a href="/catalogo">Catálogo <Icon name="up-right" /></a>
+    </div>
+  </nav>
+  <main id="conteudo">
+    <slot />
+    <section class="area-help">
+      <div class="wrap">
+        <div>
+          <span class="eyebrow light">FICOU COM DÚVIDA?</span>
+          <h2>Fale com a equipe AP.</h2>
+        </div>
+        <a class="button ivory" href={whatsappUrl(faqMessage, brand.whatsapp)} target="_blank" rel="noopener noreferrer">WhatsApp {brand.whatsappDisplay} <Icon name="message" /></a>
+      </div>
+    </section>
+  </main>
+  <Footer />
+  <Dialogs />
+  <script>
+    import '../scripts/revendedora';
+  </script>
+</BaseLayout>

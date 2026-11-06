@@ -1,0 +1,36 @@
+---
+import { earnings, earningsHint, formatMoney, ratePercent } from '../lib/reseller';
+
+// Valor médio da simulação do kit (Seja Revendedora).
+const pieces = 10;
+const average = 150;
+const result = earnings(pieces, average);
+---
+<form class="earnings" id="ganhos" novalidate>
+  <div class="earnings-inputs">
+    <span class="eyebrow">CALCULADORA DE GANHOS</span>
+    <h2>Quanto você pode ganhar em um ciclo?</h2>
+    <div class="earnings-field">
+      <label for="earnings-pieces">Peças vendidas no ciclo <output id="earnings-pieces-value" for="earnings-pieces">{pieces}</output></label>
+      <input id="earnings-pieces" type="range" min="1" max="50" step="1" value={pieces}>
+    </div>
+    <div class="earnings-field">
+      <label for="earnings-average">Valor médio de cada peça (R$)</label>
+      <input id="earnings-average" inputmode="decimal" value={average} maxlength="9" autocomplete="off">
+    </div>
+  </div>
+  <div class="earnings-result" aria-live="polite">
+    <span class="eyebrow light">VOCÊ GANHA</span>
+    <strong id="earnings-amount">{formatMoney(result.amount)}</strong>
+    <dl>
+      <dt>Total vendido</dt><dd id="earnings-total">{formatMoney(result.total)}</dd>
+      <dt>Sua comissão</dt><dd id="earnings-rate">{ratePercent(result)}</dd>
+    </dl>
+    <p id="earnings-hint">{earningsHint(result)}</p>
+  </div>
+  <p class="earnings-note">Simulação, não é previsão nem garantia de rendimento. A comissão é calculada sobre o total vendido no ciclo de 40 dias.</p>
+</form>
+
+<script>
+  import '../scripts/earnings';
+</script>
