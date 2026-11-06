@@ -8,7 +8,9 @@ const products: Product[] = [
   { code: 'AP-1120', category: 'brincos', photos: [photo, photo] },
   { code: 'AP-3008', name: 'Anel Solitário', category: 'aneis', photos: [photo] },
 ];
-import { faqMessage, filterProducts, shareMessage, validPhone, whatsappUrl } from '../src/lib/catalog.ts';
+import {
+  catalogQueryParams, countByCategory, faqMessage, filterProducts, readCatalogQuery, searchProducts, shareMessage, sortProducts, validPhone, whatsappUrl,
+} from '../src/lib/catalog.ts';
 
 test('filtro por categoria', () => {
   assert.equal(filterProducts(products, 'todas').length, products.length);
@@ -36,4 +38,43 @@ test('compartilhamento usa o nome quando existe, senão o código', () => {
   const codeOnly = shareMessage(products[0]!);
   assert.ok(codeOnly.includes(': AP-1042.'));
   assert.ok(!codeOnly.includes('undefined'));
+});
+
+test('busca por nome sem acento, código com ou sem hífen e categoria', () => {
+  const codes = (query: string) => searchProducts(products, query).map(product => product.code);
+  assert.deepEqual(codes(''), ['AP-1042', 'AP-1120', 'AP-3008']);
+  assert.deepEqual(codes('   '), ['AP-1042', 'AP-1120', 'AP-3008']);
+  assert.deepEqual(codes('solitario'), ['AP-3008']);
+  assert.deepEqual(codes('anel soli'), ['AP-3008']);
+  assert.deepEqual(codes('ap-1042'), ['AP-1042']);
+  assert.deepEqual(codes('ap1042'), ['AP-1042']);
+  assert.deepEqual(codes('brincos'), ['AP-1042', 'AP-1120']);
+  assert.deepEqual(codes('brinco'), ['AP-1042', 'AP-1120']);
+  assert.deepEqual(codes('aneis'), ['AP-3008']);
+  assert.deepEqual(codes('colar'), []);
+  // Só pontuação não pode virar "tudo".
+  assert.deepEqual(codes('#'), []);
+});
+
+test('ordenação mantém a original e não altera a lista recebida', () => {
+  const codes = (sort: Parameters<typeof sortProducts>[1]) => sortProducts(products, sort).map(product => product.code);
+  assert.deepEqual(codes('recentes'), ['AP-1042', 'AP-1120', 'AP-3008']);
+  assert.deepEqual(codes('nome'), ['AP-3008', 'AP-1042', 'AP-1120']);
+  assert.deepEqual(sortProducts([products[2]!, products[1]!, products[0]!], 'codigo').map(product => product.code), ['AP-1042', 'AP-1120', 'AP-3008']);
+  assert.equal(products[0]!.code, 'AP-1042');
+});
+
+test('contagem por categoria inclui as vazias', () => {
+  const counts = countByCategory(products);
+  assert.equal(counts.todas, 3);
+  assert.equal(counts.brincos, 2);
+  assert.equal(counts.aneis, 1);
+  assert.equal(counts.colares, 0);
+});
+
+test('filtros vão e voltam pelo endereço', () => {
+  const query = { category: 'brincos', search: 'argola fina', sort: 'nome' } as const;
+  assert.deepEqual(readCatalogQuery(catalogQueryParams(query)), query);
+  assert.equal(catalogQueryParams({ category: 'todas', search: '  ', sort: 'recentes' }).toString(), '');
+  assert.deepEqual(readCatalogQuery(new URLSearchParams('categoria=xyz&ordem=preco')), { category: 'todas', search: '', sort: 'recentes' });
 });

@@ -5,14 +5,15 @@ import { shareMessage, whatsappUrl } from '../lib/catalog';
 interface Props { product: Product }
 const { product } = Astro.props;
 const title = productTitle(product);
-const [photo, worn] = product.photos;
+const photo = product.primaryPhoto ?? product.photos[0];
+const worn = product.primaryPhoto ? product.hoverPhoto : product.photos[1];
 ---
 <article class:list={['product-card', { 'has-worn': worn }]} data-product={product.code}>
   <div class="product-photo">
     <button class="photo-button" data-view={product.code} aria-label={`Ver detalhes de ${title}`}>
       <img src={photo!.card} alt={title} width="600" height="750" loading="lazy" decoding="async" />
-      {/* 2ª foto (modelo usando a peça): aparece com fade no hover, e a foto ganha topo em arco. */}
-      {worn && <img class="photo-worn" src={worn.card} alt="" width="600" height="750" loading="lazy" decoding="async" />}
+      {/* Imagem de hover escolhida no AP Studio; independente da posição na galeria. */}
+      {worn && <img class="photo-worn" data-src={worn.card} alt="" width="600" height="750" loading="lazy" decoding="async" />}
       <span class="photo-caption-hover">VER ESTE DETALHE ↗</span>
     </button>
   </div>

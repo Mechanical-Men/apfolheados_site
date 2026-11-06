@@ -1,0 +1,90 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Dialogs from '../components/Dialogs.astro';
+import Icon from '../components/Icon.astro';
+import ProductCard from '../components/ProductCard.astro';
+import { categories } from '../data/products';
+import { catalogSorts, countByCategory, piecesLabel } from '../lib/catalog';
+import { getProducts } from '../lib/site-products';
+
+const products = await getProducts();
+const counts = countByCategory(products);
+// Lido por catalogo.ts. `<` escapado para não fechar o <script>.
+const catalogData = JSON.stringify(products).replace(/</g, '\\u003c');
+---
+<BaseLayout title="Catálogo — AP Folheados" description="Todas as peças do mostruário AP Folheados: brincos, colares, pulseiras, anéis e mais. Busque pelo nome ou pelo código.">
+  <Header />
+  <main id="conteudo">
+    <section class="catalog-hero">
+      <div class="wrap">
+        <span class="eyebrow light">CATÁLOGO AP</span>
+        <h1>Todas as peças,<br> <em>em um só lugar.</em></h1>
+        <p>Busque pelo nome ou pelo código, filtre por categoria e baixe a foto para enviar à sua cliente.</p>
+      </div>
+    </section>
+
+    <section class="catalog-page section-light">
+      <div class="catalog-controls">
+        <div class="wrap">
+          <div class="catalog-filters">
+            <div class="catalog-field catalog-search">
+              <label class="sr-only" for="catalog-search">Buscar</label>
+              <input id="catalog-search" type="search" placeholder="Buscar por nome ou código" maxlength="60" autocomplete="off" enterkeyhint="search">
+            </div>
+            <div class="catalog-field catalog-sort">
+              <label class="sr-only" for="catalog-sort">Ordenar por</label>
+              <select id="catalog-sort">
+                {catalogSorts.map(sort => <option value={sort.id}>Ordenar: {sort.label}</option>)}
+              </select>
+            </div>
+          </div>
+          <div class="category-tabs" role="group" aria-label="Categorias do catálogo">
+            <button data-category="todas" aria-pressed="true">Todas <span data-count="todas">{counts.todas}</span></button>
+            {categories.map(category => (
+              <button data-category={category.id} aria-pressed="false" hidden={counts[category.id] === 0}>{category.label} <span data-count={category.id}>{counts[category.id]}</span></button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div class="wrap">
+        <div class="catalog-status">
+          <span id="results-count" role="status" aria-live="polite">{piecesLabel(products.length)}</span>
+          <button class="catalog-clear" id="catalog-clear" hidden>Limpar filtros</button>
+        </div>
+        <div class="product-grid" id="product-grid">
+          {products.map(product => <ProductCard product={product} />)}
+          <div id="catalog-empty" class="empty-state" hidden={products.length > 0}>
+            <h3 id="catalog-empty-title">Em breve, novos detalhes.</h3>
+            <p id="catalog-empty-text">Ainda não há peças por aqui.</p>
+            <button class="button outline" data-reset hidden>Ver todas as peças <Icon name="arrow" /></button>
+          </div>
+        </div>
+        <noscript>
+          <p>Todas as peças estão acima. Ative o JavaScript para buscar e filtrar.</p>
+        </noscript>
+        <script type="application/json" id="catalog-data" set:html={catalogData}></script>
+        <div class="load-more">
+          <button class="button outline" id="load-more" hidden>Ver mais peças <span id="remaining-count"></span> <Icon name="arrow" /></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="catalog-cta">
+      <div class="wrap">
+        <div>
+          <span class="eyebrow light">SEJA UMA REVENDEDORA AP</span>
+          <h2>Gostou do que viu? <em>Leve para as suas clientes.</em></h2>
+        </div>
+        <a class="button ivory" href="/cadastro">Fazer meu cadastro <Icon name="up-right" /></a>
+      </div>
+    </section>
+  </main>
+  <Footer />
+  <Dialogs />
+  <script>
+    import '../scripts/catalogo';
+  </script>
+</BaseLayout>

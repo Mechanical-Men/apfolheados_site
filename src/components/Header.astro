@@ -7,8 +7,9 @@ import { instagramUrl } from '../config/brand';
   <div class="header-inner">
     <Brand />
     <nav id="navigation" aria-label="Navegação principal">
-      <a href="/#colecao">As peças</a>
-      <a href="/#revenda">Seja revendedora</a>
+      <a href="/catalogo" aria-current={Astro.url.pathname.startsWith('/catalogo') ? 'page' : undefined}>Catálogo</a>
+      <a href="/seja-revendedora" aria-current={Astro.url.pathname.startsWith('/seja-revendedora') ? 'page' : undefined}>Seja revendedora</a>
+      <a href="/revendedora" aria-current={Astro.url.pathname.startsWith('/revendedora') ? 'page' : undefined}>Área da revendedora</a>
       <a href="/#historia">A nossa história</a>
       <a href="/#duvidas">Dúvidas</a>
     </nav>

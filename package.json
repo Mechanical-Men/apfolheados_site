@@ -15,8 +15,6 @@
     "preencher": "grep -rn \"PREENCHER\" src"
   },
   "dependencies": {
-    "@sanity/client": "^8.10.0",
-    "@sanity/image-url": "^2.1.1",
     "astro": "^7.4.0"
   },
   "devDependencies": {

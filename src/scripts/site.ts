@@ -1,18 +1,15 @@
-import { brand } from '../config/brand';
 import { careGuideText, careTips, clientMessageTemplate } from '../data/content';
-import { categoryLabel, productTitle, type Product } from '../data/products';
-import {
-  PAGE_SIZE, filterProducts, shareMessage, whatsappUrl, type CatalogCategory,
-} from '../lib/catalog';
-import { copyText, element, escapeHtml, icon, reducedMotion, showDialog, toast } from './shell';
+import type { Product } from '../data/products';
+import { PAGE_SIZE, filterProducts, type CatalogCategory } from '../lib/catalog';
+import { publishedCard, setupProductActions, watchPublishedCatalog } from './products';
+import { copyText, element, icon, reducedMotion, showDialog, toast } from './shell';
 
 // Página inicial: mostruário, Central da Revendedora, contato, depoimentos e FAQ.
 let category: CatalogCategory = 'todas';
 let limit = PAGE_SIZE;
-const cards = [...document.querySelectorAll<HTMLElement>('[data-product]')];
-// Peças do painel do Sanity, embutidas no HTML durante o build (Collection.astro).
-const products: Product[] = JSON.parse(element('#catalog-data').textContent || '[]');
-let openProduct: Product | undefined;
+let cards = [...document.querySelectorAll<HTMLElement>('[data-product]')];
+// Catálogo Supabase publicado pelo AP Studio, com atualização online.
+let products: Product[] = JSON.parse(element('#catalog-data').textContent || '[]');
 
 function renderCatalog() {
   const list = filterProducts(products, category);
@@ -25,45 +22,6 @@ function renderCatalog() {
   document.querySelectorAll<HTMLButtonElement>('[data-category]').forEach(button => {
     button.setAttribute('aria-pressed', String(button.dataset.category === category));
   });
-}
-
-function showProduct(code: string) {
-  const product = products.find(item => item.code === code);
-  if (!product) return;
-  openProduct = product;
-  const title = escapeHtml(productTitle(product));
-  const [photo] = product.photos;
-  const reference = product.name ? `REFERÊNCIA ${escapeHtml(product.code)}` : categoryLabel(product.category).toUpperCase();
-  const thumbs = product.photos.length > 1
-    ? `<div class="piece-thumbs" role="group" aria-label="Fotos da peça">${product.photos.map((item, index) =>
-      `<button data-photo="${index}" aria-pressed="${index === 0}" aria-label="Foto ${index + 1} de ${product.photos.length}"><img src="${escapeHtml(item.thumb)}" alt="" width="120" height="150"></button>`).join('')}</div>`
-    : '';
-  element('#piece-content').innerHTML = `
-    <div class="piece-layout">
-      <div class="piece-gallery">
-        <img class="piece-large-photo" src="${escapeHtml(photo!.large)}" alt="${title}" width="900" height="1125">
-        ${thumbs}
-      </div>
-      <div class="piece-info">
-        <span class="eyebrow">UM DETALHE PARA CONHECER</span>
-        <h2 id="piece-title"${product.name ? '' : ' class="is-code"'}>${title}</h2><span class="piece-ref">${reference}</span>
-        <p>Baixe a foto ou compartilhe com a sua cliente. Para consultar a disponibilidade, envie o código para a equipe da AP.</p>
-        <a class="button black" href="${whatsappUrl(shareMessage(product))}" target="_blank" rel="noopener noreferrer">Compartilhar referência ${icon('up-right')}</a>
-        <div class="piece-options">
-          <a id="piece-download" href="${escapeHtml(photo!.download)}" download>${icon('download')}Baixar foto</a>
-          <button data-copy-code="${escapeHtml(product.code)}">${icon('copy')}Copiar código</button>
-        </div>
-      </div>
-    </div>`;
-  showDialog('piece-dialog');
-}
-
-function selectPhoto(index: number) {
-  const photo = openProduct?.photos[index];
-  if (!photo) return;
-  element<HTMLImageElement>('.piece-large-photo').src = photo.large;
-  element<HTMLAnchorElement>('#piece-download').href = photo.download;
-  document.querySelectorAll('[data-photo]').forEach(button => button.setAttribute('aria-pressed', String(button.getAttribute('data-photo') === String(index))));
 }
 
 function showResource(kind: string) {
@@ -86,12 +44,6 @@ document.addEventListener('click', async event => {
   const button = event.target.closest<HTMLElement>('button,a');
   if (!button) return;
   if (button.dataset.category) { category = button.dataset.category as CatalogCategory; limit = PAGE_SIZE; renderCatalog(); }
-  if (button.dataset.view) showProduct(button.dataset.view);
-  if (button.dataset.photo) selectPhoto(Number(button.dataset.photo));
-  if (button.dataset.copyCode) {
-    const copied = await copyText(button.dataset.copyCode);
-    toast(copied ? 'Referência copiada.' : 'Referência: ' + button.dataset.copyCode);
-  }
   if (button.dataset.resource) showResource(button.dataset.resource);
   if (button.hasAttribute('data-copy-template')) {
     const copied = await copyText(element<HTMLTextAreaElement>('#message-template').value);
@@ -112,6 +64,7 @@ document.addEventListener('click', async event => {
   }
 });
 
+setupProductActions(code => products.find(product => product.code === code));
 renderCatalog();
 
 if ('IntersectionObserver' in window && !reducedMotion.matches) {
@@ -242,4 +195,12 @@ document.querySelectorAll<HTMLDetailsElement>('.faq details').forEach(details =>
       animation = null;
     };
   });
+});
+
+void watchPublishedCatalog(() => products, next => {
+  products = next;
+  cards.forEach(card => card.remove());
+  element('#catalog-empty').insertAdjacentHTML('beforebegin', products.map(publishedCard).join(''));
+  cards = [...document.querySelectorAll<HTMLElement>('[data-product]')];
+  renderCatalog();
 });

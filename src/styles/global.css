@@ -175,6 +175,7 @@ svg{display:block}
 .resource-row h3{font-size:31px;line-height:1.2}
 .resource-row p{font-size:var(--fs-text);line-height:var(--lh-text);opacity:.78}
 .resource-row>.icon{justify-self:end}
+.resource-more{gap:20px;margin-top:32px}
 
 .testimonials{padding:40px 0 100px}
 .testimonials .section-top{align-items:end}
@@ -597,6 +598,43 @@ dialog{padding:25px 22px;width:calc(100vw - 34px);max-height:90svh}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}
 *,*:before,*:after{transition:none!important;animation:none!important}
 .reveal:not(.is-visible){opacity:1;transform:none}
+}
+
+/* Página /catalogo */
+.load-more{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
+.catalog-hero{padding:52px 0 46px}
+.catalog-hero h1{font-size:clamp(46px,4.6vw,68px);line-height:1;letter-spacing:-.025em;margin:16px 0 18px}
+.catalog-hero h1 em{color:var(--light-gold)}
+.catalog-hero p{max-width:520px;font-size:var(--fs-text);line-height:var(--lh-text);color:rgba(246,240,230,.8)}
+.catalog-page{padding-bottom:90px}
+.catalog-controls{position:sticky;top:var(--header-h);z-index:20;background:var(--ivory);border-bottom:1px solid var(--line);padding:14px 0 2px}
+.catalog-filters{display:flex;gap:14px;align-items:end;margin-bottom:4px}
+.catalog-field input,.catalog-field select{width:100%;min-height:48px;padding:0 14px;border:1px solid rgba(16,16,16,.35);border-radius:0;background:#fff;color:var(--black);font-size:16px}
+.catalog-field input::placeholder{color:rgba(16,16,16,.62);opacity:1}
+.catalog-field input:focus-visible,.catalog-field select:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+.catalog-search{flex:1;min-width:0}
+.catalog-sort{flex:0 0 220px}
+.catalog-page .category-tabs{flex-wrap:wrap;gap:0 26px}
+.catalog-page .category-tabs span{font-variant-numeric:tabular-nums}
+.catalog-clear{min-height:var(--touch);padding:0 4px;font-size:var(--fs-action);font-weight:500;text-decoration:underline;text-underline-offset:4px}
+.catalog-cta{padding:70px 0}
+.catalog-cta .wrap{display:flex;justify-content:space-between;align-items:center;gap:40px}
+.catalog-cta h2{font-size:clamp(38px,4vw,56px);margin-top:14px;max-width:640px}
+.catalog-cta h2 em{color:var(--light-gold)}
+.catalog-cta .button{flex-shrink:0;gap:20px}
+/* Em tela baixa (celular deitado), a barra presa cobriria as peças. */
+@media(max-height:640px){.catalog-controls{position:static}}
+@media(max-width:767px){
+.catalog-hero{padding:38px 0 34px}
+.catalog-page{padding-bottom:60px}
+/* Busca, ordenação e categorias ocupariam metade da tela se ficassem presas no celular. */
+.catalog-controls{position:static;padding:18px 0 4px}
+.catalog-filters{flex-direction:column;align-items:stretch;gap:12px}
+.catalog-sort{flex-basis:auto}
+.catalog-page .category-tabs{flex-wrap:nowrap;gap:22px}
+.catalog-cta{padding:50px 0}
+.catalog-cta .wrap{flex-direction:column;align-items:stretch;gap:24px}
+.load-more .button{width:100%}
 }
 
 [hidden] { display: none !important; }
